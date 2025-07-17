@@ -33,7 +33,7 @@ const features = [
     icon: "bot",
     title: "AI Auto-Moderation",
     description: "AI systems that detect and respond to chat violations in real-time.",
-    expandedContent: "Our highly customizable AI helper is able to analyze chat responses against a custom set of rules in real-time and issue real-time or manually-verified punishments with ease.",
+    expandedContent: "Our highly customizable AI helper is able to analyze chat responses against a custom set of rules and issue real-time or manually-verified punishments with ease.",
     bgColor: "bg-primary/20",
     textColor: "text-primary"
   },
@@ -192,7 +192,7 @@ export default function FeaturesSection() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
                 { text: "Drag & drop plugin for any platform", delay: 0.1 },
-                { text: "Import from Litebans and other plugins*", delay: 0.2 },
+                { text: "Import from LiteBans and other plugins*", delay: 0.2 },
                 { text: "Fully configurable messages and settings", delay: 0.3 },
                 { text: "Low latency web-to-game sync", delay: 0.4 }
               ].map((item, index) => (

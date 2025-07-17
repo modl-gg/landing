@@ -18,7 +18,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section id="top" className="relative overflow-hidden pt-32 pb-20 lg:pt-40 lg:pb-32">
+    <section id="top" className="relative overflow-hidden pt-32 pb-5 lg:pt-40 lg:pb-10">
       {/* Background gradients */}
       <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full filter blur-3xl"></div>
       <div className="absolute top-40 -left-40 w-80 h-80 bg-green-500/10 rounded-full filter blur-3xl"></div>
@@ -82,7 +82,7 @@ export default function HeroSection() {
             </div>
             <h3 className="text-2xl font-bold mb-4">For server owners, by server owners</h3>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Coming from a Minecraft server owner background, we built MODL to streamline
+              Coming from a Minecraft server owner background, we built modl.gg to streamline
                the numerous inefficiencies that hold back effective moderation and support
                 at scale for gaming communities. Utilizing fully dynamic punishments, AI
                  integration, and a beautiful web panel, we aim to make moderation and support painless

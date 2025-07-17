@@ -10,24 +10,24 @@ import {
 const FAQData = [
   {
     question: "How easy is it to install?",
-    answer: "Register your server, install the plugin on your proxy or server, plug in the API key and you're good to go!"
+    answer: "Register your server, install the plugin on your proxy or server, plug in the API key, and you're good to go!"
   },
   {
     question: "Can I customize the moderation rules for my game?",
-    answer: "Absolutely! Everything is fully customizable, with smart & thought-out defaults we let you tweak everything from locale messages to punishment types."
+    answer: "Absolutely! Everything is fully customizable. With smart & thought-out defaults, we let you tweak everything from locale messages to punishment types."
   },
   {
-    question: "Can I migrate from Litebans?",
-    answer: "Yes, we offer migration tools from Litebans to import all of your current punishments (coming soon)."
+    question: "Can I migrate from LiteBans?",
+    answer: "Yes, we offer migration tools from LiteBans to import all of your current punishments (coming soon)."
   }
 ];
 
 export default function FAQSection() {
   return (
-    <section id="faq" className="py-20 bg-card/50 relative overflow-hidden">
+    <section id="faq" className="bg-card/50 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-background to-transparent"></div>
       
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-4xl pt-20 pb-4 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div 
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
@@ -73,6 +73,8 @@ export default function FAQSection() {
           </Accordion>
         </motion.div>
       </div>
+
+      <p className="text-muted-foreground mt-0 mb-8 text-center mx-auto">Contact us at support@modl.gg</p>
     </section>
   );
 }
