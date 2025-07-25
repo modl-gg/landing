@@ -86,7 +86,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       await transporter.verify();
       await transporter.sendMail({
-        from: '"modl" <noreply@cobl.gg>', // sender address
+        from: `"modl" <noreply@${appDomain}>`, // sender address
         to: validatedData.email, // list of receivers
         subject: "Verify Your Email Address for modl", // Subject line
         text: `Please verify your email address by clicking the following link: ${verificationLink}`, // plain text body
