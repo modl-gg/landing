@@ -66,18 +66,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Rate limit cleanup: ${sizeBefore} -> ${registrationRateLimit.size} entries`);
 
       // Send verification email
+      const smtpPort = Number(process.env.SMTP_PORT) || 25;
+      const emailAuth = {
+        user: process.env.SMTP_USERNAME,
+        pass: process.env.SMTP_PASSWORD 
+      };
       const transporter = nodemailer.createTransport({
-        host: "localhost", // Assuming postfix is running on localhost
-        port: 25,
+        host: process.env.SMTP_HOST || "localhost", // Assuming postfix is running on localhost
+        port: smtpPort,
         secure: false, // true for 465, false for other ports
         tls: {
           rejectUnauthorized: false // Allow self-signed certificates
-        }
+        },
+        auth: (emailAuth.user && emailAuth.pass) ? emailAuth : undefined
       });
 
       const appDomain = process.env.APP_DOMAIN || "modl.gg";
       const verificationLink = `https://${serverInfo.customDomain}.${appDomain}/verify-email?token=${emailVerificationToken}`;
 
+      await transporter.verify();
       await transporter.sendMail({
         from: '"modl" <noreply@cobl.gg>', // sender address
         to: validatedData.email, // list of receivers
