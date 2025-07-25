@@ -96,7 +96,7 @@ export default function PricingSection() {
               </div>
               <p className="mt-4 text-muted-foreground">For large communities turning a profit.</p>
               
-              <ul className="mt-12 space-y-4">
+              <ul className="mt-6 space-y-4">
                 {premiumPlanFeatures.map((feature, index) => (
                   <motion.li 
                     key={index} 
