@@ -27,7 +27,7 @@ jobs:
 
       - name: Deploy via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.STAGING_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.STAGING_IP }} "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" << 'EOF'
             set -e
             
             cd /home/modl/modl-landing
@@ -51,11 +51,6 @@ jobs:
               exit 1
             fi
           EOF
-
-      # - name: Verify deployment
-      #   run: |
-      #     echo "Deployment verification completed"
-      # if we ever add in health checks then we could use this? idk i aint gonna bother lol
 
       - name: Notify on failure
         if: failure()
