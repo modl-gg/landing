@@ -27,8 +27,9 @@ jobs:
 
       - name: Deploy via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.STAGING_IP }} "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.STAGING_IP }} << EOF
             set -e
+            export GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
             
             cd /home/modl/modl-landing
             
@@ -50,7 +51,7 @@ jobs:
               echo "Error: PM2 process failed to start"
               exit 1
             fi
-          EOF
+            EOF
 
       - name: Notify on failure
         if: failure()
