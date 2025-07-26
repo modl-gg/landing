@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import RegistrationForm from "@/components/registration/RegistrationForm";
-import { Particles } from "modl-shared-web/components/ui/particles";
+import { Particles } from "@modl-gg/shared-web/components/ui/particles";
 
 export default function Registration() {
   useEffect(() => {

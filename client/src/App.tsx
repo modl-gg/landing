@@ -1,8 +1,8 @@
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "modl-shared-web/components/ui/toaster";
-import { TooltipProvider } from "modl-shared-web/components/ui/tooltip";
+import { Toaster } from "@modl-gg/shared-web/components/ui/toaster";
+import { TooltipProvider } from "@modl-gg/shared-web/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Registration from "@/pages/Registration";

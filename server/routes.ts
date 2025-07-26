@@ -5,7 +5,7 @@ import { z } from "zod";
 import nodemailer from "nodemailer"; // Added
 import crypto from "crypto"; // Added
 import 'dotenv/config';
-import { registrationSchema } from 'modl-shared-web';
+import { registrationSchema } from '@modl-gg/shared-web';
 
 // Rate limiting for registration - stores IP addresses and their last registration time
 const registrationRateLimit = new Map<string, number>();

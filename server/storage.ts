@@ -1,4 +1,4 @@
-import { InsertServer, Server } from "modl-shared-web";
+import { InsertServer, Server } from "@modl-gg/shared-web";
 import { MongoClient } from "mongodb";
 import 'dotenv/config';
 

@@ -5,7 +5,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "modl-shared-web/components/ui/accordion";
+} from "@modl-gg/shared-web/components/ui/accordion";
 
 const FAQData = [
   {
