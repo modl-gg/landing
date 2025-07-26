@@ -7,7 +7,7 @@ import PricingSection from "@/components/home/PricingSection";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import FAQSection from "@/components/home/FAQSection";
 import Footer from "@/components/home/Footer";
-import { Particles } from "modl-shared-web/components/ui/particles";
+import { Particles } from "@modl-gg/shared-web/components/ui/particles";
 
 export default function Home() {
   useEffect(() => {

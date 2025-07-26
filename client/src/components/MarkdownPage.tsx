@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import ReactMarkdown from "react-markdown";
-import { Button } from "modl-shared-web/components/ui/button";
+import { Button } from "@modl-gg/shared-web/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
 interface MarkdownPageProps {

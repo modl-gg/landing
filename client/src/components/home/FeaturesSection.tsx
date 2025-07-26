@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, ChevronDown, X, Plus } from "lucide-react";
-import { Button } from "modl-shared-web/components/ui/button";
+import { Button } from "@modl-gg/shared-web/components/ui/button";
 
 // Define the features array with detailed content
 const features = [

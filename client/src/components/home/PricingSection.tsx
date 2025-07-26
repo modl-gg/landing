@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
-import { Button } from "modl-shared-web/components/ui/button";
+import { Button } from "@modl-gg/shared-web/components/ui/button";
 
 const freePlanFeatures = [
   "Up to 15 staff members",

@@ -1,5 +1,5 @@
 import { useLocation } from "wouter";
-import { Button } from "modl-shared-web/components/ui/button";
+import { Button } from "@modl-gg/shared-web/components/ui/button";
 import { motion } from "framer-motion";
 import { Check, ArrowDown } from "lucide-react";
 

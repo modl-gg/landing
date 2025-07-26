@@ -4,14 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "modl-shared-web/components/ui/form";
-import { Input } from "modl-shared-web/components/ui/input";
-import { Button } from "modl-shared-web/components/ui/button";
-import { Checkbox } from "modl-shared-web/components/ui/checkbox";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@modl-gg/shared-web/components/ui/form";
+import { Input } from "@modl-gg/shared-web/components/ui/input";
+import { Button } from "@modl-gg/shared-web/components/ui/button";
+import { Checkbox } from "@modl-gg/shared-web/components/ui/checkbox";
 import { ArrowLeft } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import SuccessModal from "./SuccessModal";
-import { Label } from "modl-shared-web/components/ui/label";
+import { Label } from "@modl-gg/shared-web/components/ui/label";
 
 const registrationSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
