@@ -8,10 +8,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@modl-gg/shared-web/components/ui/input";
 import { Button } from "@modl-gg/shared-web/components/ui/button";
 import { Checkbox } from "@modl-gg/shared-web/components/ui/checkbox";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, AlertCircle } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import SuccessModal from "./SuccessModal";
 import { Label } from "@modl-gg/shared-web/components/ui/label";
+import { Alert, AlertDescription, AlertTitle } from "@modl-gg/shared-web/components/ui/alert";
 
 const registrationSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -31,6 +32,7 @@ export default function RegistrationForm() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [registeredDomain, setRegisteredDomain] = useState<string | undefined>(undefined);
+  const [emailError, setEmailError] = useState<string | null>(null);
   
   const form = useForm<RegistrationValues>({
     resolver: zodResolver(registrationSchema),
@@ -44,6 +46,7 @@ export default function RegistrationForm() {
 
   const onSubmit = async (values: RegistrationValues) => {
     setIsSubmitting(true);
+    setEmailError(null); // Clear any previous email errors
     try {
       // Always submit with free plan - premium upgrades handled in modl-panel
       const submitData = {
@@ -56,11 +59,33 @@ export default function RegistrationForm() {
         setRegisteredDomain(values.customDomain); // Save the custom domain
       }
     } catch (error) {
-      toast({
-        title: "Registration failed",
-        description: error instanceof Error ? JSON.parse(error.message.substring(4)).message : "Please try again later", // substring 4 to remove '500: ' from the beginning of JSON string
-        variant: "destructive",
-      });
+      if (error instanceof Error) {
+        const errorMessage = error.message;
+        // Check if it's a 409 error (duplicate email)
+        if (errorMessage.startsWith("409:")) {
+          const parsedError = JSON.parse(errorMessage.substring(4));
+          // Check if the error message indicates email already exists
+          if (parsedError.message && parsedError.message.toLowerCase().includes("email")) {
+            setEmailError(parsedError.message);
+            // Scroll to top to show the error
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return; // Don't show toast for email errors
+          }
+        }
+        // For other errors, use toast
+        const parsedError = JSON.parse(errorMessage.substring(4));
+        toast({
+          title: "Registration failed",
+          description: parsedError.message || "Please try again later",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Registration failed",
+          description: "Please try again later",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -97,6 +122,16 @@ export default function RegistrationForm() {
                 Create a panel for your server and start using in minutes with our free plan.
               </p>
             </div>
+            
+            {emailError && (
+              <Alert variant="destructive" className="mb-6">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Registration Error</AlertTitle>
+                <AlertDescription>
+                  {emailError}
+                </AlertDescription>
+              </Alert>
+            )}
             
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
