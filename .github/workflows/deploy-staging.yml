@@ -33,9 +33,7 @@ jobs:
           cd /home/modl/modl-landing
           git stash
           git pull origin dev
-          if git diff --name-only HEAD@{1} HEAD | grep -q "package.*\.json"; then
-            npm ci
-          fi
+          npm i
           npm run build
           pm2 reload modl-landing --wait-ready
           if pm2 describe modl-landing | grep -q "online"; then
