@@ -5,7 +5,21 @@ import { z } from "zod";
 import nodemailer from "nodemailer"; // Added
 import crypto from "crypto"; // Added
 import 'dotenv/config';
-import { registrationSchema } from '@modl-gg/shared-web';
+
+// Registration schema that allows spaces in server names
+const registrationSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  serverName: z.string()
+    .min(3, { message: "Server name is required (min 3 characters)" })
+    .max(100, { message: "Server name must be less than 100 characters" })
+    .trim(),
+  customDomain: z.string()
+    .min(3, { message: "Subdomain is required (min 3 characters)" })
+    .max(50, { message: "Subdomain must be less than 50 characters" })
+    .regex(/^[a-z0-9-]+$/, { message: "Subdomain can only contain lowercase letters, numbers, and hyphens" })
+    .trim(),
+  plan: z.enum(["free", "premium"]).default("free"),
+});
 
 // Rate limiting for registration - stores IP addresses and their last registration time
 const registrationRateLimit = new Map<string, number>();
@@ -103,9 +117,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ 
-          success: false, 
-          message: "Validation failed. Please check the details you provided and try again.", 
+        // Create a more user-friendly validation error message
+        const fieldErrors = error.errors.map(err => {
+          const field = err.path.join('.');
+          return `${field}: ${err.message}`;
+        }).join(', ');
+
+        return res.status(400).json({
+          success: false,
+          message: `Validation failed: ${fieldErrors}`,
           errors: error.errors
         });
       }
@@ -116,10 +136,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: error.message.replace("DUPLICATE_ENTRY: ", ""), // More user-friendly message
         });
       }
-      
+
       console.error("Registration error:", error);
-      return res.status(500).json({ 
-        success: false, 
+      return res.status(500).json({
+        success: false,
         message: "An internal server error occurred during registration. Please try again later. If the issue persists, contact support."
       });
     }

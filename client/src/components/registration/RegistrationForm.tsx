@@ -14,10 +14,18 @@ import SuccessModal from "./SuccessModal";
 import { Label } from "@modl-gg/shared-web/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@modl-gg/shared-web/components/ui/alert";
 
+// Registration schema that allows spaces in server names
 const registrationSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
-  serverName: z.string().min(3, { message: "Server name is required (min 3 characters)" }),
-  customDomain: z.string().min(3, { message: "Subdomain is required (min 3 characters)" }),
+  serverName: z.string()
+    .min(3, { message: "Server name is required (min 3 characters)" })
+    .max(100, { message: "Server name must be less than 100 characters" })
+    .trim(),
+  customDomain: z.string()
+    .min(3, { message: "Subdomain is required (min 3 characters)" })
+    .max(50, { message: "Subdomain must be less than 50 characters" })
+    .regex(/^[a-z0-9-]+$/, { message: "Subdomain can only contain lowercase letters, numbers, and hyphens" })
+    .trim(),
   agreeTerms: z.literal(true, {
     errorMap: () => ({ message: "You must agree to the terms to continue" }),
   }),
@@ -40,7 +48,7 @@ export default function RegistrationForm() {
       email: "",
       serverName: "",
       customDomain: "",
-      agreeTerms: false,
+      agreeTerms: false as any, // Will be validated by Zod
     },
   });
 
@@ -61,9 +69,35 @@ export default function RegistrationForm() {
     } catch (error) {
       if (error instanceof Error) {
         const errorMessage = error.message;
+
+        // Helper function to safely parse error response
+        const parseErrorResponse = (message: string) => {
+          try {
+            // Find the colon separator after status code
+            const colonIndex = message.indexOf(':');
+            if (colonIndex === -1) {
+              return { message: message };
+            }
+
+            const responseText = message.substring(colonIndex + 1).trim();
+
+            // Try to parse as JSON first
+            try {
+              return JSON.parse(responseText);
+            } catch {
+              // If not JSON, return as plain text message
+              return { message: responseText };
+            }
+          } catch {
+            // Fallback to original message
+            return { message: message };
+          }
+        };
+
+        const parsedError = parseErrorResponse(errorMessage);
+
         // Check if it's a 409 error (duplicate email)
         if (errorMessage.startsWith("409:")) {
-          const parsedError = JSON.parse(errorMessage.substring(4));
           // Check if the error message indicates email already exists
           if (parsedError.message && parsedError.message.toLowerCase().includes("email")) {
             setEmailError(parsedError.message);
@@ -72,8 +106,8 @@ export default function RegistrationForm() {
             return; // Don't show toast for email errors
           }
         }
-        // For other errors, use toast
-        const parsedError = JSON.parse(errorMessage.substring(4));
+
+        // For all other errors, use toast
         toast({
           title: "Registration failed",
           description: parsedError.message || "Please try again later",
