@@ -3,7 +3,6 @@ import { useLocation, useRoute } from "wouter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useToast } from "@/hooks/use-toast";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@modl-gg/shared-web/components/ui/form";
 import { Input } from "@modl-gg/shared-web/components/ui/input";
 import { Button } from "@modl-gg/shared-web/components/ui/button";
@@ -13,6 +12,7 @@ import { apiRequest } from "@/lib/queryClient";
 import SuccessModal from "./SuccessModal";
 import { Label } from "@modl-gg/shared-web/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@modl-gg/shared-web/components/ui/alert";
+import { useToast } from "@modl-gg/shared-web";
 
 // Registration schema that allows spaces in server names
 const registrationSchema = z.object({
