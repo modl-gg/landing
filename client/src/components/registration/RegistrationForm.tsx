@@ -12,7 +12,7 @@ import { apiRequest } from "@/lib/queryClient";
 import SuccessModal from "./SuccessModal";
 import { Label } from "@modl-gg/shared-web/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@modl-gg/shared-web/components/ui/alert";
-import { useToast } from "@modl-gg/shared-web";
+import { useToast } from '@modl-gg/shared-web/hooks/use-toast';
 
 // Registration schema that allows spaces in server names
 const registrationSchema = z.object({
