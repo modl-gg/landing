@@ -111,8 +111,19 @@ export const useTurnstile = (options: UseTurnstileOptions) => {
 
   const renderWidget = useCallback(() => {
     if (!window.turnstile || !containerRef.current || widgetIdRef.current) {
+      console.log("Render widget conditions not met:", {
+        hasTurnstile: !!window.turnstile,
+        hasContainer: !!containerRef.current,
+        hasWidgetId: !!widgetIdRef.current
+      });
       return;
     }
+
+    console.log("Rendering Turnstile widget with options:", {
+      sitekey: options.sitekey,
+      appearance: options.appearance || 'execute',
+      execution: options.execution || 'execute'
+    });
 
     try {
       const widgetId = window.turnstile.render(containerRef.current, {
@@ -120,26 +131,31 @@ export const useTurnstile = (options: UseTurnstileOptions) => {
         theme: options.theme || 'auto',
         size: options.size || 'normal',
         action: options.action,
-        appearance: options.appearance || 'execute', // Use 'execute' for background/invisible mode
-        execution: options.execution || 'execute',
+        appearance: options.appearance || 'always', // Show the widget
+        execution: options.execution || 'render',
         retry: options.retry || 'auto',
         'retry-interval': options['retry-interval'],
         'refresh-expired': options['refresh-expired'] || 'auto',
         callback: (token: string) => {
+          console.log("Turnstile callback fired with token:", token);
           options.onSuccess?.(token);
         },
         'error-callback': () => {
+          console.log("Turnstile error callback fired");
           options.onError?.();
         },
         'expired-callback': () => {
+          console.log("Turnstile expired callback fired");
           options.onExpired?.();
         },
         'after-interactive-callback': () => {
+          console.log("Turnstile after-interactive callback fired");
           options.onLoad?.();
         },
       });
       
       widgetIdRef.current = widgetId;
+      console.log("Turnstile widget rendered with ID:", widgetId);
     } catch (error) {
       console.error('Failed to render Turnstile widget:', error);
       options.onError?.();
@@ -153,8 +169,17 @@ export const useTurnstile = (options: UseTurnstileOptions) => {
   }, []);
 
   const execute = useCallback(() => {
+    console.log("Execute called - checking conditions:", {
+      hasTurnstile: !!window.turnstile,
+      hasContainer: !!containerRef.current,
+      widgetId: widgetIdRef.current
+    });
+    
     if (window.turnstile && containerRef.current) {
+      console.log("Executing Turnstile widget");
       window.turnstile.execute(containerRef.current);
+    } else {
+      console.log("Cannot execute Turnstile - missing requirements");
     }
   }, []);
 
@@ -176,17 +201,29 @@ export const useTurnstile = (options: UseTurnstileOptions) => {
     let mounted = true;
 
     const initialize = async () => {
+      console.log("Initializing Turnstile...");
       try {
         await loadScript();
+        console.log("Turnstile script loaded successfully");
         
-        if (!mounted) return;
+        if (!mounted) {
+          console.log("Component unmounted, aborting initialization");
+          return;
+        }
 
         // Don't use turnstile.ready() when dynamically loading the script
         // Add a small delay to ensure the API is completely initialized
         setTimeout(() => {
           if (mounted && window.turnstile && !isLoadedRef.current) {
+            console.log("Rendering Turnstile widget after delay");
             renderWidget();
             isLoadedRef.current = true;
+          } else {
+            console.log("Skipping widget render:", {
+              mounted,
+              hasTurnstile: !!window.turnstile,
+              isLoaded: isLoadedRef.current
+            });
           }
         }, 100);
       } catch (error) {

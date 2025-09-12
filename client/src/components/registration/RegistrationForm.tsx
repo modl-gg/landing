@@ -179,10 +179,9 @@ export default function RegistrationForm() {
   };
 
   const handleTurnstileLoad = () => {
-    // Automatically execute Turnstile when it loads for background verification
-    setTimeout(() => {
-      turnstileRef.current?.execute();
-    }, 500);
+    console.log("Turnstile loaded and ready for interaction");
+    // With 'interaction-only' mode, the captcha will verify automatically when the form is submitted
+    // No need to manually execute
   };
 
   return (

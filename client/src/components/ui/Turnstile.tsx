@@ -54,8 +54,8 @@ const Turnstile = forwardRef<TurnstileRef, TurnstileProps>(({
     theme,
     size,
     action,
-    appearance: invisible ? 'execute' : 'always',
-    execution: 'execute',
+    appearance: 'always', // Always show the widget (but make it invisible with CSS)
+    execution: 'render', // Render immediately
     retry,
     'retry-interval': retryInterval,
     'refresh-expired': refreshExpired,
