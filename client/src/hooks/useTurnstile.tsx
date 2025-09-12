@@ -66,18 +66,44 @@ export const useTurnstile = (options: UseTurnstileOptions) => {
       // Check if script is already in DOM
       const existingScript = document.querySelector('script[src*="challenges.cloudflare.com"]');
       if (existingScript) {
-        existingScript.addEventListener('load', () => resolve());
-        existingScript.addEventListener('error', reject);
+        // If script exists but turnstile is not available yet, wait for it
+        if (window.turnstile) {
+          resolve();
+        } else {
+          existingScript.addEventListener('load', () => {
+            // Wait a bit for turnstile to be available
+            const checkTurnstile = () => {
+              if (window.turnstile) {
+                resolve();
+              } else {
+                setTimeout(checkTurnstile, 50);
+              }
+            };
+            checkTurnstile();
+          });
+          existingScript.addEventListener('error', reject);
+        }
         return;
       }
 
-      // Create and load script
+      // Create and load script WITHOUT async/defer to avoid turnstile.ready() issues
       const script = document.createElement('script');
       script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
-      script.async = true;
-      script.defer = true;
+      // Remove async and defer to fix the turnstile.ready() issue
+      // script.async = true;
+      // script.defer = true;
       
-      script.onload = () => resolve();
+      script.onload = () => {
+        // Wait a bit for turnstile to be fully available
+        const checkTurnstile = () => {
+          if (window.turnstile) {
+            resolve();
+          } else {
+            setTimeout(checkTurnstile, 50);
+          }
+        };
+        checkTurnstile();
+      };
       script.onerror = reject;
       
       document.head.appendChild(script);
@@ -156,13 +182,21 @@ export const useTurnstile = (options: UseTurnstileOptions) => {
         
         if (!mounted) return;
 
-        if (window.turnstile) {
+        // At this point, window.turnstile should be available
+        if (window.turnstile && window.turnstile.ready) {
+          // Use turnstile.ready() to ensure everything is properly initialized
           window.turnstile.ready(() => {
             if (mounted && !isLoadedRef.current) {
               renderWidget();
               isLoadedRef.current = true;
             }
           });
+        } else {
+          // Fallback: directly render if ready function is not available
+          if (mounted && !isLoadedRef.current) {
+            renderWidget();
+            isLoadedRef.current = true;
+          }
         }
       } catch (error) {
         console.error('Failed to load Turnstile:', error);
