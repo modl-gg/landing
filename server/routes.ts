@@ -19,11 +19,40 @@ const registrationSchema = z.object({
     .regex(/^[a-z0-9-]+$/, { message: "Subdomain can only contain lowercase letters, numbers, and hyphens" })
     .trim(),
   plan: z.enum(["free", "premium"]).default("free"),
+  turnstileToken: z.string().min(1, { message: "Captcha verification is required" }),
 });
 
 // Rate limiting for registration - stores IP addresses and their last registration time
 const registrationRateLimit = new Map<string, number>();
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes in milliseconds
+
+// Verify Turnstile token with CloudFlare
+async function verifyTurnstileToken(token: string, clientIP: string): Promise<boolean> {
+  try {
+    const secretKey = process.env.TURNSTILE_SECRET_KEY;
+    if (!secretKey) {
+      console.warn("TURNSTILE_SECRET_KEY not configured, skipping verification in development");
+      // In development, you might want to skip verification or use a test key
+      return process.env.NODE_ENV === "development";
+    }
+
+    const formData = new FormData();
+    formData.append('secret', secretKey);
+    formData.append('response', token);
+    formData.append('remoteip', clientIP);
+
+    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const result = await response.json();
+    return result.success === true;
+  } catch (error) {
+    console.error('Turnstile verification error:', error);
+    return false;
+  }
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Registration endpoint
@@ -54,6 +83,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const validatedData = registrationSchema.parse(req.body);
+      
+      // Verify Turnstile token
+      const isValidCaptcha = await verifyTurnstileToken(validatedData.turnstileToken, clientIP);
+      if (!isValidCaptcha) {
+        return res.status(400).json({
+          success: false,
+          message: "Captcha verification failed. Please try again."
+        });
+      }
+      
       const emailVerificationToken = crypto.randomBytes(32).toString("hex"); // Added
       
       // Create the server entry in MongoDB

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, useRoute } from "wouter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -13,6 +13,7 @@ import SuccessModal from "./SuccessModal";
 import { Label } from "@modl-gg/shared-web/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@modl-gg/shared-web/components/ui/alert";
 import { useToast } from '@modl-gg/shared-web/hooks/use-toast';
+import Turnstile, { TurnstileRef } from "@/components/ui/Turnstile";
 
 // Registration schema that allows spaces in server names
 const registrationSchema = z.object({
@@ -29,6 +30,7 @@ const registrationSchema = z.object({
   agreeTerms: z.literal(true, {
     errorMap: () => ({ message: "You must agree to the terms to continue" }),
   }),
+  turnstileToken: z.string().min(1, { message: "Please complete the verification" }),
 });
 
 type RegistrationValues = z.infer<typeof registrationSchema>;
@@ -41,6 +43,8 @@ export default function RegistrationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [registeredDomain, setRegisteredDomain] = useState<string | undefined>(undefined);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [turnstileReady, setTurnstileReady] = useState(false);
+  const turnstileRef = useRef<TurnstileRef>(null);
   
   const form = useForm<RegistrationValues>({
     resolver: zodResolver(registrationSchema),
@@ -49,12 +53,25 @@ export default function RegistrationForm() {
       serverName: "",
       customDomain: "",
       agreeTerms: false as any, // Will be validated by Zod
+      turnstileToken: "",
     },
   });
 
   const onSubmit = async (values: RegistrationValues) => {
     setIsSubmitting(true);
     setEmailError(null); // Clear any previous email errors
+    
+    // Ensure Turnstile token is present
+    if (!values.turnstileToken) {
+      toast({
+        title: "Verification required",
+        description: "Please complete the verification before submitting",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+    
     try {
       // Always submit with free plan - premium upgrades handled in modl-panel
       const submitData = {
@@ -127,6 +144,37 @@ export default function RegistrationForm() {
 
   const backToHome = () => {
     navigate("/");
+  };
+
+  const handleTurnstileSuccess = (token: string) => {
+    form.setValue("turnstileToken", token);
+    setTurnstileReady(true);
+  };
+
+  const handleTurnstileError = () => {
+    form.setValue("turnstileToken", "");
+    setTurnstileReady(false);
+    toast({
+      title: "Verification failed",
+      description: "Please try again",
+      variant: "destructive",
+    });
+  };
+
+  const handleTurnstileExpired = () => {
+    form.setValue("turnstileToken", "");
+    setTurnstileReady(false);
+    // Auto-retry on expiration
+    setTimeout(() => {
+      turnstileRef.current?.execute();
+    }, 1000);
+  };
+
+  const handleTurnstileLoad = () => {
+    // Automatically execute Turnstile when it loads for background verification
+    setTimeout(() => {
+      turnstileRef.current?.execute();
+    }, 500);
   };
 
   return (
@@ -259,6 +307,19 @@ export default function RegistrationForm() {
                       </div>
                     </FormItem>
                   )}
+                />
+
+                {/* Turnstile Component - Hidden/Background verification */}
+                <Turnstile
+                  ref={turnstileRef}
+                  sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY || "0x4AAAAAAAwFVKHm8qsHK6ql"} // Demo key fallback
+                  onSuccess={handleTurnstileSuccess}
+                  onError={handleTurnstileError}
+                  onExpired={handleTurnstileExpired}
+                  onLoad={handleTurnstileLoad}
+                  invisible={true}
+                  theme="auto"
+                  action="register"
                 />
                 
                 <Button 
