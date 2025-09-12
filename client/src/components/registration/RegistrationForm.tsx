@@ -58,11 +58,13 @@ export default function RegistrationForm() {
   });
 
   const onSubmit = async (values: RegistrationValues) => {
+    console.log("Form submission started", values);
     setIsSubmitting(true);
     setEmailError(null); // Clear any previous email errors
     
     // Ensure Turnstile token is present
     if (!values.turnstileToken) {
+      console.log("No Turnstile token found, blocking submission");
       toast({
         title: "Verification required",
         description: "Please complete the verification before submitting",
@@ -72,14 +74,18 @@ export default function RegistrationForm() {
       return;
     }
     
+    console.log("Turnstile token present, proceeding with submission");
+    
     try {
       // Always submit with free plan - premium upgrades handled in modl-panel
       const submitData = {
         ...values,
         plan: "free" as const
       };
+      console.log("Sending registration request", submitData);
       const res = await apiRequest("POST", "/api/register", submitData);
       if (res.ok) {
+        console.log("Registration successful");
         setShowSuccess(true);
         setRegisteredDomain(values.customDomain); // Save the custom domain
       }
@@ -147,8 +153,10 @@ export default function RegistrationForm() {
   };
 
   const handleTurnstileSuccess = (token: string) => {
+    console.log("Turnstile success - token received:", token);
     form.setValue("turnstileToken", token);
     setTurnstileReady(true);
+    console.log("Form values after token set:", form.getValues());
   };
 
   const handleTurnstileError = () => {
@@ -216,7 +224,14 @@ export default function RegistrationForm() {
             )}
             
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={form.handleSubmit(onSubmit, (errors) => {
+                console.log("Form validation errors:", errors);
+                toast({
+                  title: "Form validation failed",
+                  description: "Please check all required fields",
+                  variant: "destructive",
+                });
+              })} className="space-y-6">
                 <FormField
                   control={form.control}
                   name="email"
@@ -321,11 +336,30 @@ export default function RegistrationForm() {
                   theme="auto"
                   action="register"
                 />
+
+                {/* Hidden field for Turnstile token */}
+                <FormField
+                  control={form.control}
+                  name="turnstileToken"
+                  render={({ field }) => (
+                    <FormItem className="hidden">
+                      <FormControl>
+                        <Input {...field} type="hidden" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 
                 <Button 
                   type="submit" 
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3" 
                   disabled={isSubmitting}
+                  onClick={() => {
+                    console.log("Submit button clicked");
+                    console.log("Current form values:", form.getValues());
+                    console.log("Form errors:", form.formState.errors);
+                  }}
                 >
                   {isSubmitting ? "Registering..." : "Register"}
                 </Button>
