@@ -130,6 +130,7 @@ export default function RegistrationForm() {
   };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   const handleTurnstileSuccess = (token: string) => {
     form.setValue("turnstileToken", token);
     setTurnstileReady(true);
@@ -160,6 +161,8 @@ export default function RegistrationForm() {
 
 =======
 >>>>>>> ff3d32b (Revert "Implement CloudFlare captcha")
+=======
+>>>>>>> ff3d32ba52de888b26da7ad3677f56c33d4be34b
   return (
     <div className="min-h-screen flex flex-col">
       <SuccessModal show={showSuccess} onClose={() => setShowSuccess(false)} customDomain={registeredDomain} />
@@ -292,6 +295,7 @@ export default function RegistrationForm() {
                   )}
                 />
 <<<<<<< HEAD
+<<<<<<< HEAD
 
                 {/* Turnstile Component - Hidden/Background verification */}
                 <Turnstile
@@ -321,6 +325,8 @@ export default function RegistrationForm() {
                 />
 =======
 >>>>>>> ff3d32b (Revert "Implement CloudFlare captcha")
+=======
+>>>>>>> ff3d32ba52de888b26da7ad3677f56c33d4be34b
                 
                 <Button 
                   type="submit" 
