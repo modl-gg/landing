@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, useRoute } from "wouter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -13,6 +13,7 @@ import SuccessModal from "./SuccessModal";
 import { Label } from "@modl-gg/shared-web/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@modl-gg/shared-web/components/ui/alert";
 import { useToast } from '@modl-gg/shared-web/hooks/use-toast';
+import Turnstile, { TurnstileRef } from "../ui/Turnstile";
 
 // Registration schema that allows spaces in server names
 const registrationSchema = z.object({
@@ -29,6 +30,7 @@ const registrationSchema = z.object({
   agreeTerms: z.literal(true, {
     errorMap: () => ({ message: "You must agree to the terms to continue" }),
   }),
+  turnstileToken: z.string().min(1, { message: "Security verification is required" }),
 });
 
 type RegistrationValues = z.infer<typeof registrationSchema>;
@@ -41,6 +43,8 @@ export default function RegistrationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [registeredDomain, setRegisteredDomain] = useState<string | undefined>(undefined);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileRef>(null);
+  const [turnstileReady, setTurnstileReady] = useState(false);
   
   const form = useForm<RegistrationValues>({
     resolver: zodResolver(registrationSchema),
@@ -49,10 +53,21 @@ export default function RegistrationForm() {
       serverName: "",
       customDomain: "",
       agreeTerms: false as any, // Will be validated by Zod
+      turnstileToken: "",
     },
   });
 
   const onSubmit = async (values: RegistrationValues) => {
+    // Ensure Turnstile token is present before submission
+    if (!values.turnstileToken) {
+      toast({
+        title: "Security verification required",
+        description: "Please wait for security verification to complete",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     setEmailError(null); // Clear any previous email errors
     try {
@@ -129,14 +144,14 @@ export default function RegistrationForm() {
     navigate("/");
   };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   const handleTurnstileSuccess = (token: string) => {
+    console.log("Turnstile verification successful");
     form.setValue("turnstileToken", token);
     setTurnstileReady(true);
   };
 
   const handleTurnstileError = () => {
+    console.log("Turnstile verification failed");
     form.setValue("turnstileToken", "");
     setTurnstileReady(false);
     toast({
@@ -147,6 +162,7 @@ export default function RegistrationForm() {
   };
 
   const handleTurnstileExpired = () => {
+    console.log("Turnstile verification expired, retrying...");
     form.setValue("turnstileToken", "");
     setTurnstileReady(false);
     // Auto-retry on expiration
@@ -157,12 +173,13 @@ export default function RegistrationForm() {
 
   const handleTurnstileLoad = () => {
     // Turnstile loaded and ready for interaction
+    console.log("Turnstile widget loaded");
+    // Execute immediately in invisible mode
+    setTimeout(() => {
+      turnstileRef.current?.execute();
+    }, 500);
   };
 
-=======
->>>>>>> ff3d32b (Revert "Implement CloudFlare captcha")
-=======
->>>>>>> ff3d32ba52de888b26da7ad3677f56c33d4be34b
   return (
     <div className="min-h-screen flex flex-col">
       <SuccessModal show={showSuccess} onClose={() => setShowSuccess(false)} customDomain={registeredDomain} />
@@ -294,13 +311,11 @@ export default function RegistrationForm() {
                     </FormItem>
                   )}
                 />
-<<<<<<< HEAD
-<<<<<<< HEAD
 
                 {/* Turnstile Component - Hidden/Background verification */}
                 <Turnstile
                   ref={turnstileRef}
-                  sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY || "0x4AAAAAAAwFVKHm8qsHK6ql"} // Demo key fallback
+                  sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
                   onSuccess={handleTurnstileSuccess}
                   onError={handleTurnstileError}
                   onExpired={handleTurnstileExpired}
@@ -323,10 +338,6 @@ export default function RegistrationForm() {
                     </FormItem>
                   )}
                 />
-=======
->>>>>>> ff3d32b (Revert "Implement CloudFlare captcha")
-=======
->>>>>>> ff3d32ba52de888b26da7ad3677f56c33d4be34b
                 
                 <Button 
                   type="submit" 

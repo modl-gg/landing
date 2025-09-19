@@ -6,6 +6,38 @@ import nodemailer from "nodemailer"; // Added
 import crypto from "crypto"; // Added
 import 'dotenv/config';
 
+// Turnstile validation function
+async function validateTurnstileToken(token: string, remoteip?: string): Promise<boolean> {
+  try {
+    const secretKey = process.env.TURNSTILE_SECRET_KEY;
+    if (!secretKey) {
+      console.error('TURNSTILE_SECRET_KEY is not set in environment variables');
+      return false;
+    }
+
+    const formData = new URLSearchParams();
+    formData.append('secret', secretKey);
+    formData.append('response', token);
+    if (remoteip) {
+      formData.append('remoteip', remoteip);
+    }
+
+    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData,
+    });
+
+    const result = await response.json();
+    return result.success === true;
+  } catch (error) {
+    console.error('Error validating Turnstile token:', error);
+    return false;
+  }
+}
+
 // Registration schema that allows spaces in server names
 const registrationSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -19,6 +51,7 @@ const registrationSchema = z.object({
     .regex(/^[a-z0-9-]+$/, { message: "Subdomain can only contain lowercase letters, numbers, and hyphens" })
     .trim(),
   plan: z.enum(["free", "premium"]).default("free"),
+  turnstileToken: z.string().min(1, { message: "Security verification is required" }),
 });
 
 // Rate limiting for registration - stores IP addresses and their last registration time
@@ -54,6 +87,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const validatedData = registrationSchema.parse(req.body);
+      
+      // Validate Turnstile token
+      const turnstileValid = await validateTurnstileToken(validatedData.turnstileToken, clientIP);
+      if (!turnstileValid) {
+        console.log(`Turnstile validation failed for IP ${clientIP}`);
+        return res.status(400).json({
+          success: false,
+          message: "Security verification failed. Please try again."
+        });
+      }
+      
       const emailVerificationToken = crypto.randomBytes(32).toString("hex"); // Added
       
       // Create the server entry in MongoDB
