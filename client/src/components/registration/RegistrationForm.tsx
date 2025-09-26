@@ -15,7 +15,52 @@ import { Alert, AlertDescription, AlertTitle } from "@modl-gg/shared-web/compone
 import { useToast } from '@modl-gg/shared-web/hooks/use-toast';
 import Turnstile, { TurnstileRef } from "../ui/Turnstile";
 
-// Registration schema that allows spaces in server names
+
+const BLOCKED_SUBDOMAINS = [
+  'panel',
+  'admin',
+  'support',
+  'payments',
+  'api',
+  'www',
+  'mail',
+  'email',
+  'ftp',
+  'ssh',
+  'vpn',
+  'help',
+  'blog',
+  'docs',
+  'status',
+  'app',
+  'dashboard',
+  'portal',
+  'login',
+  'signup',
+  'register',
+  'billing',
+  'account',
+  'secure',
+  'dev',
+  'test',
+  'staging',
+  'prod',
+  'production',
+  'demo',
+  'beta',
+  'alpha',
+  'internal',
+  'staff',
+  'employee',
+  'root',
+  'super',
+  'master',
+  'owner',
+  'moderator',
+  'mod',
+  'administrator'
+];
+
 const registrationSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
   serverName: z.string()
@@ -26,7 +71,11 @@ const registrationSchema = z.object({
     .min(3, { message: "Subdomain is required (min 3 characters)" })
     .max(50, { message: "Subdomain must be less than 50 characters" })
     .regex(/^[a-z0-9-]+$/, { message: "Subdomain can only contain lowercase letters, numbers, and hyphens" })
+    .refine((domain) => !BLOCKED_SUBDOMAINS.includes(domain.toLowerCase()), {
+      message: "This subdomain is reserved and cannot be used. Please choose a different one.",
+    })
     .trim(),
+  
   agreeTerms: z.literal(true, {
     errorMap: () => ({ message: "You must agree to the terms to continue" }),
   }),
