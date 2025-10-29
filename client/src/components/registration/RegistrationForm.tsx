@@ -68,13 +68,13 @@ const registrationSchema = z.object({
     .max(100, { message: "Server name must be less than 100 characters" })
     .trim(),
   customDomain: z.string()
+    .trim()
     .min(3, { message: "Subdomain is required (min 3 characters)" })
     .max(50, { message: "Subdomain must be less than 50 characters" })
     .regex(/^[a-z0-9-]+$/, { message: "Subdomain can only contain lowercase letters, numbers, and hyphens" })
     .refine((domain) => !BLOCKED_SUBDOMAINS.includes(domain.toLowerCase()), {
       message: "This subdomain is reserved and cannot be used. Please choose a different one.",
-    })
-    .trim(),
+    }),
   
   agreeTerms: z.literal(true, {
     errorMap: () => ({ message: "You must agree to the terms to continue" }),
