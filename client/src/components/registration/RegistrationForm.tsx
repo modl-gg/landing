@@ -109,14 +109,16 @@ export default function RegistrationForm() {
   const onSubmit = async (values: RegistrationValues) => {
     // Ensure Turnstile token is present before submission
     if (!values.turnstileToken) {
+      console.error("Form submitted without Turnstile token");
       toast({
         title: "Security verification required",
-        description: "Please wait for security verification to complete",
+        description: "Please complete the security challenge before registering",
         variant: "destructive",
       });
       return;
     }
 
+    console.log("Submitting registration with Turnstile token:", values.turnstileToken.substring(0, 20) + "...");
     setIsSubmitting(true);
     setEmailError(null); // Clear any previous email errors
     try {
@@ -194,8 +196,9 @@ export default function RegistrationForm() {
   };
 
   const handleTurnstileSuccess = (token: string) => {
-    console.log("Turnstile verification successful");
+    console.log("Turnstile verification successful, token:", token?.substring(0, 20) + "...");
     form.setValue("turnstileToken", token);
+    form.clearErrors("turnstileToken");
     setTurnstileReady(true);
   };
 
@@ -211,22 +214,16 @@ export default function RegistrationForm() {
   };
 
   const handleTurnstileExpired = () => {
-    console.log("Turnstile verification expired, retrying...");
+    console.log("Turnstile verification expired, resetting...");
     form.setValue("turnstileToken", "");
     setTurnstileReady(false);
-    // Auto-retry on expiration
-    setTimeout(() => {
-      turnstileRef.current?.execute();
-    }, 1000);
+    // Reset the widget to get a new challenge
+    turnstileRef.current?.reset();
   };
 
   const handleTurnstileLoad = () => {
     // Turnstile loaded and ready for interaction
     console.log("Turnstile widget loaded");
-    // Execute immediately in invisible mode
-    setTimeout(() => {
-      turnstileRef.current?.execute();
-    }, 500);
   };
 
   return (
@@ -361,18 +358,22 @@ export default function RegistrationForm() {
                   )}
                 />
 
-                {/* Turnstile Component - Hidden/Background verification */}
-                <Turnstile
-                  ref={turnstileRef}
-                  sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-                  onSuccess={handleTurnstileSuccess}
-                  onError={handleTurnstileError}
-                  onExpired={handleTurnstileExpired}
-                  onLoad={handleTurnstileLoad}
-                  invisible={true}
-                  theme="auto"
-                  action="register"
-                />
+                {/* Turnstile Component - Visible widget for better reliability */}
+                <div className="flex justify-center">
+                  <Turnstile
+                    ref={turnstileRef}
+                    sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                    onSuccess={handleTurnstileSuccess}
+                    onError={handleTurnstileError}
+                    onExpired={handleTurnstileExpired}
+                    onLoad={handleTurnstileLoad}
+                    invisible={false}
+                    theme="auto"
+                    action="register"
+                    retry="auto"
+                    refresh-expired="auto"
+                  />
+                </div>
 
                 {/* Hidden field for Turnstile token */}
                 <FormField

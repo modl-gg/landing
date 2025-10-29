@@ -115,30 +115,36 @@ export const useTurnstile = (options: UseTurnstileOptions) => {
     }
 
     try {
+      console.log('Rendering Turnstile widget with sitekey:', options.sitekey?.substring(0, 20) + '...');
       const widgetId = window.turnstile.render(containerRef.current, {
         sitekey: options.sitekey,
         theme: options.theme || 'auto',
         size: options.size || 'normal',
         action: options.action,
-        appearance: options.appearance || 'always', // Show the widget
+        appearance: options.appearance || 'always',
         execution: options.execution || 'render',
         retry: options.retry || 'auto',
         'retry-interval': options['retry-interval'],
         'refresh-expired': options['refresh-expired'] || 'auto',
         callback: (token: string) => {
+          console.log('Turnstile callback triggered with token:', token?.substring(0, 20) + '...');
           options.onSuccess?.(token);
         },
         'error-callback': () => {
+          console.error('Turnstile error callback triggered');
           options.onError?.();
         },
         'expired-callback': () => {
+          console.log('Turnstile expired callback triggered');
           options.onExpired?.();
         },
         'after-interactive-callback': () => {
+          console.log('Turnstile after-interactive callback triggered');
           options.onLoad?.();
         },
       });
       
+      console.log('Turnstile widget rendered with ID:', widgetId);
       widgetIdRef.current = widgetId;
     } catch (error) {
       console.error('Failed to render Turnstile widget:', error);
