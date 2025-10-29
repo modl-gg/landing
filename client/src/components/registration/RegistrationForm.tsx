@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation, useRoute } from "wouter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -195,14 +195,14 @@ export default function RegistrationForm() {
     navigate("/");
   };
 
-  const handleTurnstileSuccess = (token: string) => {
+  const handleTurnstileSuccess = useCallback((token: string) => {
     console.log("Turnstile verification successful, token:", token?.substring(0, 20) + "...");
     form.setValue("turnstileToken", token);
     form.clearErrors("turnstileToken");
     setTurnstileReady(true);
-  };
+  }, [form]);
 
-  const handleTurnstileError = () => {
+  const handleTurnstileError = useCallback(() => {
     console.log("Turnstile verification failed");
     form.setValue("turnstileToken", "");
     setTurnstileReady(false);
@@ -211,20 +211,20 @@ export default function RegistrationForm() {
       description: "Please try again",
       variant: "destructive",
     });
-  };
+  }, [form, toast]);
 
-  const handleTurnstileExpired = () => {
+  const handleTurnstileExpired = useCallback(() => {
     console.log("Turnstile verification expired, resetting...");
     form.setValue("turnstileToken", "");
     setTurnstileReady(false);
     // Reset the widget to get a new challenge
     turnstileRef.current?.reset();
-  };
+  }, [form]);
 
-  const handleTurnstileLoad = () => {
+  const handleTurnstileLoad = useCallback(() => {
     // Turnstile loaded and ready for interaction
     console.log("Turnstile widget loaded");
-  };
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">

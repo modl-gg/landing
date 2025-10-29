@@ -54,6 +54,20 @@ export const useTurnstile = (options: UseTurnstileOptions) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
   const isLoadedRef = useRef(false);
+  
+  // Store callbacks in refs to avoid re-renders
+  const onSuccessRef = useRef(options.onSuccess);
+  const onErrorRef = useRef(options.onError);
+  const onExpiredRef = useRef(options.onExpired);
+  const onLoadRef = useRef(options.onLoad);
+  
+  // Update refs when callbacks change
+  useEffect(() => {
+    onSuccessRef.current = options.onSuccess;
+    onErrorRef.current = options.onError;
+    onExpiredRef.current = options.onExpired;
+    onLoadRef.current = options.onLoad;
+  });
 
   const loadScript = useCallback(() => {
     return new Promise<void>((resolve, reject) => {
@@ -128,19 +142,19 @@ export const useTurnstile = (options: UseTurnstileOptions) => {
         'refresh-expired': options['refresh-expired'] || 'auto',
         callback: (token: string) => {
           console.log('Turnstile callback triggered with token:', token?.substring(0, 20) + '...');
-          options.onSuccess?.(token);
+          onSuccessRef.current?.(token);
         },
         'error-callback': () => {
           console.error('Turnstile error callback triggered');
-          options.onError?.();
+          onErrorRef.current?.();
         },
         'expired-callback': () => {
           console.log('Turnstile expired callback triggered');
-          options.onExpired?.();
+          onExpiredRef.current?.();
         },
         'after-interactive-callback': () => {
           console.log('Turnstile after-interactive callback triggered');
-          options.onLoad?.();
+          onLoadRef.current?.();
         },
       });
       
@@ -148,9 +162,9 @@ export const useTurnstile = (options: UseTurnstileOptions) => {
       widgetIdRef.current = widgetId;
     } catch (error) {
       console.error('Failed to render Turnstile widget:', error);
-      options.onError?.();
+      onErrorRef.current?.();
     }
-  }, [options]);
+  }, [options.sitekey, options.theme, options.size, options.action, options.appearance, options.execution, options.retry, options['retry-interval'], options['refresh-expired']]);
 
   const reset = useCallback(() => {
     if (window.turnstile && widgetIdRef.current) {
@@ -198,7 +212,7 @@ export const useTurnstile = (options: UseTurnstileOptions) => {
       } catch (error) {
         console.error('Failed to load Turnstile:', error);
         if (mounted) {
-          options.onError?.();
+          onErrorRef.current?.();
         }
       }
     };
@@ -210,7 +224,7 @@ export const useTurnstile = (options: UseTurnstileOptions) => {
       remove();
       isLoadedRef.current = false;
     };
-  }, [options.sitekey, loadScript, renderWidget, remove, options.onError]);
+  }, [options.sitekey, loadScript, renderWidget, remove]);
 
   return {
     containerRef,
