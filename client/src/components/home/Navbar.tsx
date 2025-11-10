@@ -43,6 +43,7 @@ export default function Navbar() {
               <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors duration-200" onClick={(e) => { e.preventDefault(); scrollToSection("features"); }}>Features</a>
               <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors duration-200" onClick={(e) => { e.preventDefault(); scrollToSection("pricing"); }}>Pricing</a>
               <a href="#faq" className="text-muted-foreground hover:text-foreground transition-colors duration-200" onClick={(e) => { e.preventDefault(); scrollToSection("faq"); }}>FAQ</a>
+              <a href="https://modl.gg/discord" target="_blank" className="text-muted-foreground hover:text-foreground transition-colors duration-200">Discord</a>
               <Button className="bg-primary hover:bg-primary/90 text-primary-foreground" onClick={goToRegistration}>
                 Register for Free
               </Button>
