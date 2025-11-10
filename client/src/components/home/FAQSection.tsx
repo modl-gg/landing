@@ -9,6 +9,10 @@ import {
 
 const FAQData = [
   {
+    question: "Why would I bother switching to modl.gg from my current setup?",
+    answer: "Switching to modl.gg would provide you with tools more powerful than any other publicly available setup for Minecraft. Our point-based dynamic punishment system fairly calculates punishment durations without any extra work on staff members. Our web panel makes things easy to find and allows staff members to easily cross-reference data between multiple players. We also provide AI-powered tools to automate majority of your reports and tickets, allowing your staff to focus on more important things. Furthermore, moving is easy: we provide a migration tool to effortlessly transfer your existing data. Most importantly, modl.gg is free and will stay free."
+  },
+  {
     question: "How easy is it to install?",
     answer: "Register your server, install the plugin on your proxy or server, plug in the API key, and you're good to go!"
   },
@@ -18,7 +22,19 @@ const FAQData = [
   },
   {
     question: "Can I migrate from LiteBans?",
-    answer: "Yes, we offer migration tools from LiteBans to import all of your current punishments (coming soon)."
+    answer: "Yes! We offer migration tools to import all of your current punishments and player data from LiteBans."
+  },
+  {
+    question: "Is modl.gg free to use?",
+    answer: "Yes! Our platform is completely free to use, and it will stay this way. We provide a premium plan for extra features (targeted towards larger servers), but purchasing it is completely optional."
+  },
+  {
+    question: "What Minecraft server types does modl.gg support?",
+    answer: "We support Spigot, Paper, Folia, Velocity, and BungeeCord (forks too). Forge/Fabric support is being worked on right now."
+  },
+  {
+    question: "Where can I report issues and/or give feedback?",
+    answer: "You can email us or join our Discord at: modl.gg/discord"
   }
 ];
 

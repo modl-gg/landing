@@ -32,8 +32,8 @@ const features = [
   {
     icon: "bot",
     title: "AI Auto-Moderation",
-    description: "AI systems that detect and respond to chat violations in real-time.",
-    expandedContent: "Our highly customizable AI helper is able to analyze chat responses against a custom set of rules and issue real-time or manually-verified punishments with ease.",
+    description: "AI systems that detect and respond to chat reports in real-time.",
+    expandedContent: "Our highly customizable AI helper is able to analyze chat responses against a custom set of rules and issue real-time or manually-verified punishments with ease. It integrates directly into the tickets feature and requires no additional setup (besides purchasing Premium).",
     bgColor: "bg-primary/20",
     textColor: "text-primary"
   },
@@ -49,7 +49,7 @@ const features = [
     icon: "layout-dashboard",
     title: "Analytics Dashboard",
     description: "Comprehensive reports and insights on trends and moderator activity.",
-    expandedContent: "Our analytics dashboard gives you deep insights into moderation trends, support trends, and staff activity. Take actions such as rollingback staff punishments, adjusting punishment lengths, and more to combat bad actors.",
+    expandedContent: "Our analytics dashboard gives you deep insights into moderation trends, support trends, and staff activity. Take actions such as rolling back staff punishments, adjusting punishment lengths, and more to combat bad actors.",
     bgColor: "bg-green-500/20",
     textColor: "text-green-500"
   }
