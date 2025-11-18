@@ -1,7 +1,6 @@
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
-import { Button } from "@modl-gg/shared-web/components/ui/button";
 
 const freePlanFeatures = [
   "Up to 15 staff members",
@@ -91,7 +90,7 @@ export default function PricingSection() {
             <div className="p-8">
               <h3 className="text-xl font-bold mb-2">Premium Plan</h3>
               <div className="flex items-baseline">
-                <span className="text-4xl font-bold">$20</span>
+                <span className="text-4xl font-bold">$9.99</span>
                 <span className="text-muted-foreground ml-2">/month</span>
               </div>
               <p className="mt-4 text-muted-foreground">For large communities turning a profit.</p>
