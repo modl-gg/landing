@@ -127,7 +127,7 @@ export default function RegistrationForm() {
         ...values,
         plan: "free" as const
       };
-      const res = await apiRequest("POST", "/api/register", submitData);
+      const res = await apiRequest("POST", "/v1/public/registration", submitData);
       if (res.ok) {
         setShowSuccess(true);
         setRegisteredDomain(values.customDomain); // Save the custom domain

@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@modl-gg/shared-web/components/ui/accordion";
+import { MODL } from "@modl-gg/shared-web";
 
 const FAQData = [
   {
@@ -90,7 +90,7 @@ export default function FAQSection() {
         </motion.div>
       </div>
 
-      <p className="text-muted-foreground mt-0 mb-8 text-center mx-auto">Contact us at support@modl.gg</p>
+      <p className="text-muted-foreground mt-0 mb-8 text-center mx-auto">Contact us at {MODL.Email.SUPPORT}</p>
     </section>
   );
 }
