@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { Button } from "@modl-gg/shared-web/components/ui/button";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -10,10 +9,10 @@ export default function Navbar() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
-    
+
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Check initially
-    
+    handleScroll();
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -29,31 +28,58 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-background/90 border-b border-gray-800 backdrop-blur shadow-lg' : ''}`}>
-      <div className="bg-background/90 backdrop-blur border-b border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <a href="#" className="flex items-center" onClick={(e) => { e.preventDefault(); scrollToSection("top"); }}>
-                <span className="text-2xl font-bold text-primary font-['Audiowide',cursive]">modl</span>
-                <span className="ml-2 text-xs text-muted-foreground mt-1">BETA</span>
-              </a>
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors duration-200" onClick={(e) => { e.preventDefault(); scrollToSection("features"); }}>Features</a>
-              <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors duration-200" onClick={(e) => { e.preventDefault(); scrollToSection("pricing"); }}>Pricing</a>
-              <a href="#faq" className="text-muted-foreground hover:text-foreground transition-colors duration-200" onClick={(e) => { e.preventDefault(); scrollToSection("faq"); }}>FAQ</a>
-              <a href="https://modl.gg/discord" target="_blank" className="text-muted-foreground hover:text-foreground transition-colors duration-200">Discord</a>
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground" onClick={goToRegistration}>
-                Register for Free
-              </Button>
-            </div>
-            <div className="md:hidden flex items-center">
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground" onClick={goToRegistration}>
-                Register Now
-              </Button>
-            </div>
-          </div>
+    <nav className="fixed top-0 w-full z-50 border-b border-slate-200/10 bg-background/80 backdrop-blur-md">
+      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <div className="flex items-center">
+          <a
+            href="#"
+            className="text-2xl font-extrabold tracking-tight"
+            onClick={(e) => { e.preventDefault(); scrollToSection("top"); }}
+          >
+            <span className="text-primary">modl</span>
+            <span className="text-white">.gg</span>
+          </a>
+        </div>
+
+        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
+          <a
+            href="#features"
+            className="hover:text-primary transition-colors"
+            onClick={(e) => { e.preventDefault(); scrollToSection("features"); }}
+          >
+            Features
+          </a>
+          <a
+            href="#pricing"
+            className="hover:text-primary transition-colors"
+            onClick={(e) => { e.preventDefault(); scrollToSection("pricing"); }}
+          >
+            Pricing
+          </a>
+          <a
+            href="#faq"
+            className="hover:text-primary transition-colors"
+            onClick={(e) => { e.preventDefault(); scrollToSection("faq"); }}
+          >
+            FAQ
+          </a>
+          <a
+            href="https://modl.gg/discord"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary transition-colors"
+          >
+            Discord
+          </a>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <button
+            className="px-5 py-2.5 bg-primary text-white font-semibold rounded-full hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] transition-all active:scale-95"
+            onClick={goToRegistration}
+          >
+            Register Free
+          </button>
         </div>
       </div>
     </nav>

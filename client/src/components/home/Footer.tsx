@@ -1,58 +1,109 @@
-import { motion } from "framer-motion";
+import { Github } from "lucide-react";
+import { FaDiscord } from "react-icons/fa";
 
 export default function Footer() {
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
-    <footer className="bg-background py-6 border-t border-gray-800">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
-          className="pt-8 flex flex-col md:flex-row justify-between items-center"
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <div className="flex items-center">
-            <span className="text-2xl font-bold text-primary font-['Audiowide',cursive]">modl</span>
-            <span className="ml-2 text-xs text-muted-foreground mt-1">BETA</span>
+    <footer className="py-20 px-6 border-t border-slate-200/10">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
+          <div className="flex flex-col gap-4">
+            <a
+              href="#"
+              className="text-2xl font-extrabold tracking-tight"
+              onClick={(e) => { e.preventDefault(); scrollToSection("top"); }}
+            >
+              <span className="text-primary">modl</span>
+              <span className="text-white">.gg</span>
+            </a>
+            <p className="text-slate-500 text-sm max-w-xs">
+              First-class moderation and support tools for Minecraft servers.
+            </p>
           </div>
-          <div className="flex space-x-6">
-            <a href="/privacy" className="text-muted-foreground hover:text-foreground text-sm">Privacy Policy</a>
-            <a href="/terms" className="text-muted-foreground hover:text-foreground text-sm">Terms of Service</a>
-            <div className="text-muted-foreground text-sm mb-4 md:mb-0">
-              &copy; {new Date().getFullYear()} All rights reserved.
+
+          <div className="flex gap-12">
+            <div>
+              <h5 className="font-bold mb-4 text-xs uppercase tracking-widest text-slate-400">Product</h5>
+              <ul className="space-y-2 text-sm text-slate-500">
+                <li>
+                  <a
+                    href="#features"
+                    className="hover:text-white transition-colors"
+                    onClick={(e) => { e.preventDefault(); scrollToSection("features"); }}
+                  >
+                    Features
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#pricing"
+                    className="hover:text-white transition-colors"
+                    onClick={(e) => { e.preventDefault(); scrollToSection("pricing"); }}
+                  >
+                    Pricing
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://modl.gg/discord"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    Discord
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h5 className="font-bold mb-4 text-xs uppercase tracking-widest text-slate-400">Legal</h5>
+              <ul className="space-y-2 text-sm text-slate-500">
+                <li>
+                  <a href="/privacy" className="hover:text-white transition-colors">
+                    Privacy Policy
+                  </a>
+                </li>
+                <li>
+                  <a href="/terms" className="hover:text-white transition-colors">
+                    Terms of Service
+                  </a>
+                </li>
+              </ul>
             </div>
           </div>
-        
-        </motion.div>
+        </div>
+
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-slate-200/5">
+          <p className="text-slate-600 text-xs">
+            © {new Date().getFullYear()} modl.gg. All rights reserved. Not an official Minecraft product.
+          </p>
+          <div className="flex items-center gap-6">
+            <a
+              href="https://modl.gg/discord"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-500 hover:text-white transition-colors"
+            >
+              <FaDiscord className="w-5 h-5" />
+            </a>
+            <a
+              href="https://github.com/modl-gg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-500 hover:text-white transition-colors"
+            >
+              <Github className="w-5 h-5" />
+            </a>
+          </div>
+        </div>
       </div>
     </footer>
-  );
-}
-
-function FooterLinkColumn({ title, links, delay = 0 }: { title: string; links: string[]; delay?: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-    >
-      <h3 className="text-lg font-medium mb-4">{title}</h3>
-      <ul className="space-y-2">
-        {links.map((link, index) => (
-          <motion.li 
-            key={index}
-            initial={{ opacity: 0, x: -10 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3, delay: delay + (index * 0.03) }}
-          >
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-              {link}
-            </a>
-          </motion.li>
-        ))}
-      </ul>
-    </motion.div>
   );
 }

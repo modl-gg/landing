@@ -1,116 +1,115 @@
-import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 
 const freePlanFeatures = [
-  "Up to 15 staff members",
-  "Full-feature moderation & support suite",
-  "2GB CDN Storage",
-  "No ads, no gimmicks",
-  "Community & developer support"
+  { text: "Up to <b>15</b> staff members" },
+  { text: "<b>Full-feature</b> moderation & support suite" },
+  { text: "2GB <b>CDN</b> Storage" },
+  { text: "No ads, <b>no gimmicks</b>" },
+  { text: "<b>Community</b> & developer support" }
 ];
 
 const premiumPlanFeatures = [
-  "Unlimited staff members",
-  "Full-feature moderation & support suite",
-  "200GB CDN Storage ($0.05/GB/Month after)",
-  "Beta AI chat moderation & tickets access",
-  "Priority developer support",
+  { text: "<b>Unlimited</b> staff members" },
+  { text: "<b>Full-feature</b> moderation & support suite" },
+  { text: "200GB <b>CDN</b> Storage" },
+  { text: "Beta <b>AI</b> chat moderation & tickets access" },
+  { text: "<b>Priority</b> developer support" }
 ];
 
 export default function PricingSection() {
-  const [, navigate] = useLocation();
-
-  const goToRegistration = (plan: string) => {
-    navigate(`/register?plan=${plan}`);
-  };
-
   return (
-    <section id="pricing" className="py-20 bg-card/50 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-background to-transparent"></div>
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background to-transparent"></div>
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div 
+    <section id="pricing" className="py-24 px-6">
+      <div className="max-w-5xl mx-auto">
+        <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Free forever for hobbyists, fair forever when you get serious.
-          </p>
+          <h2 className="text-4xl font-bold mb-4 tracking-tight">Simple, Transparent Pricing</h2>
+          <p className="text-slate-400">Free forever for hobbyists, fair forever when you get serious.</p>
         </motion.div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
           {/* Free Plan */}
-          <motion.div 
-            className="bg-card rounded-2xl border border-primary/50 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:border-primary/50"
+          <motion.div
+            className="glass rounded-[2rem] p-8 flex flex-col"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5 }}
           >
-            <div className="p-8">
+            <div className="mb-8">
               <h3 className="text-xl font-bold mb-2">Free Plan</h3>
-              <div className="flex items-baseline">
-                <span className="text-4xl font-bold">$0</span>
-                <span className="text-muted-foreground ml-2">/month</span>
+              <p className="text-slate-400 text-sm">Free forever for growing communities.</p>
+              <div className="mt-6 flex items-baseline gap-1">
+                <span className="text-5xl font-bold tracking-tight">$0</span>
+                <span className="text-slate-500 font-medium text-sm">/month</span>
               </div>
-              <p className="mt-4 text-muted-foreground">Free forever for growing communities.</p>
-              
-              <ul className="mt-6 space-y-4">
-                {freePlanFeatures.map((feature, index) => (
-                  <motion.li 
-                    key={index} 
-                    className="flex items-start"
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.3, delay: 0.1 + (index * 0.05) }}
-                  >
-                    <Check className="text-green-500 mt-1 mr-2" />
-                    <span dangerouslySetInnerHTML={{ __html: feature.replace(/\b(15|Full-feature|CDN|no gimmicks|Community)\b/g, '<b>$1</b>') }}></span>
-                  </motion.li>
-                ))}
-              </ul>
             </div>
+            <div className="flex-grow space-y-4 mb-10">
+              {freePlanFeatures.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  className="flex items-start gap-3 text-sm text-slate-300"
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: 0.1 + (index * 0.05) }}
+                >
+                  <Check className="text-emerald-400 w-5 h-5 shrink-0 mt-0.5" />
+                  <span dangerouslySetInnerHTML={{ __html: feature.text }} />
+                </motion.div>
+              ))}
+            </div>
+            <button className="w-full py-4 bg-slate-800 border border-slate-700 hover:border-slate-600 text-white font-semibold rounded-xl hover:bg-slate-700 transition-all text-sm mt-auto">
+              Get Started
+            </button>
           </motion.div>
-          
+
           {/* Premium Plan */}
-          <motion.div 
-            className="bg-card rounded-2xl border border-primary/50 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/20 relative"
+          <motion.div
+            className="glass rounded-[2rem] p-8 flex flex-col border-primary/40 shadow-[0_0_30px_rgba(14,165,233,0.05)]"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <div className="p-8">
-              <h3 className="text-xl font-bold mb-2">Premium Plan</h3>
-              <div className="flex items-baseline">
-                <span className="text-4xl font-bold">$9.99</span>
-                <span className="text-muted-foreground ml-2">/month</span>
+            <div className="mb-8">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-xl font-bold mb-2">Premium Plan</h3>
+                  <p className="text-slate-400 text-sm">For large communities turning a profit.</p>
+                </div>
+                <span className="text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 px-2 py-1 rounded-full uppercase tracking-wider">
+                  Most Popular
+                </span>
               </div>
-              <p className="mt-4 text-muted-foreground">For large communities turning a profit.</p>
-              
-              <ul className="mt-6 space-y-4">
-                {premiumPlanFeatures.map((feature, index) => (
-                  <motion.li 
-                    key={index} 
-                    className="flex items-start"
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.3, delay: 0.2 + (index * 0.05) }}
-                  >
-                    <Check className="text-green-500 mt-1 mr-2" />
-                    <span dangerouslySetInnerHTML={{ __html: feature.replace(/\b(Unlimited|Full-feature|AI|Priority|CDN)\b/g, '<b>$1</b>') }}></span>
-                  </motion.li>
-                ))}
-              </ul>
+              <div className="mt-6 flex items-baseline gap-1">
+                <span className="text-5xl font-bold tracking-tight">$9.99</span>
+                <span className="text-slate-500 font-medium text-sm">/month</span>
+              </div>
             </div>
+            <div className="flex-grow space-y-4 mb-10">
+              {premiumPlanFeatures.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  className="flex items-start gap-3 text-sm text-slate-300"
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: 0.2 + (index * 0.05) }}
+                >
+                  <Check className="text-primary w-5 h-5 shrink-0 mt-0.5" />
+                  <span dangerouslySetInnerHTML={{ __html: feature.text }} />
+                </motion.div>
+              ))}
+            </div>
+            <button className="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-all text-sm mt-auto shadow-lg shadow-primary/20">
+              Upgrade to Premium
+            </button>
           </motion.div>
         </div>
       </div>

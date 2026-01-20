@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronDown, X, Plus } from "lucide-react";
+import { Check, X, Plus } from "lucide-react";
 import { Button } from "@modl-gg/shared-web/components/ui/button";
 
-// Define the features array with detailed content
 const features = [
   {
     icon: "shield-check",
@@ -16,18 +15,18 @@ const features = [
   {
     icon: "link",
     title: "Account Linking",
-    description: "Never issue a ban evasion punishment ever again or mangle with ip-bans .",
+    description: "Never issue a ban evasion punishment ever again or mangle with ip-bans.",
     expandedContent: "Automatically link accounts and issue alt-blocking punishments. Handle each linked ban independently, allowing for effortless appeals of siblings and other exceptions.",
     bgColor: "bg-accent/20",
-    textColor: "text-neutral-400"
+    textColor: "text-accent"
   },
   {
     icon: "headphones",
     title: "Support Tickets",
     description: "Integrated ticketing system for reports, appeals, bugs, applications, and support",
     expandedContent: "Customize forms, quick-responses, notify players in-game and via email of ticket updates, and monitor how response times. For example, appeals automatically gather punishment information and you can pardon/reduce bans with 1 click.",
-    bgColor: "bg-green-500/20",
-    textColor: "text-green-500"
+    bgColor: "bg-emerald-500/20",
+    textColor: "text-emerald-400"
   },
   {
     icon: "bot",
@@ -43,19 +42,18 @@ const features = [
     description: "Stay in control of your server anywhere you go with the web.",
     expandedContent: "A web interface that allows you to manage your server more efficiently than ever before alongside comprehensive in-game tools.",
     bgColor: "bg-accent/20",
-    textColor: "text-neutral-400"
+    textColor: "text-accent"
   },
   {
     icon: "layout-dashboard",
     title: "Analytics Dashboard",
     description: "Comprehensive reports and insights on trends and moderator activity.",
     expandedContent: "Our analytics dashboard gives you deep insights into moderation trends, support trends, and staff activity. Take actions such as rolling back staff punishments, adjusting punishment lengths, and more to combat bad actors.",
-    bgColor: "bg-green-500/20",
-    textColor: "text-green-500"
+    bgColor: "bg-emerald-500/20",
+    textColor: "text-emerald-400"
   }
 ];
 
-// Icon mapping
 const getIcon = (iconName: string) => {
   switch (iconName) {
     case "shield-check":
@@ -73,7 +71,7 @@ const getIcon = (iconName: string) => {
     case "headphones":
       return (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1.0 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
         </svg>
       );
     case "bot":
@@ -111,13 +109,9 @@ export default function FeaturesSection() {
   };
 
   return (
-    <section id="features" className="py-20 bg-card/50 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-background to-transparent"></div>
-      <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full filter blur-3xl"></div>
-      <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-green-500/10 rounded-full filter blur-3xl"></div>
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div 
+    <section id="features" className="py-24 px-6">
+      <div className="max-w-7xl mx-auto">
+        <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -125,23 +119,23 @@ export default function FeaturesSection() {
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">Powerful Moderation Tools</h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-slate-400 max-w-2xl mx-auto">
             Everything you need to keep your Minecraft community safe, engaged, and supported
           </p>
         </motion.div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, index) => (
-            <motion.div 
+            <motion.div
               key={index}
-              className={`bg-card rounded-xl border ${expandedFeature === index ? 'border-primary shadow-lg shadow-primary/10' : 'border-gray-800'} p-6 transition-all duration-300`}
+              className={`glass rounded-3xl p-8 transition-all duration-300 ${expandedFeature === index ? 'border-primary/40' : ''}`}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.5, delay: index * 0.05 }}
             >
               <div className="flex justify-between items-start">
-                <div className={`w-12 h-12 ${feature.bgColor} rounded-lg flex items-center justify-center mb-4`}>
+                <div className={`w-12 h-12 ${feature.bgColor} rounded-2xl flex items-center justify-center mb-6`}>
                   <span className={feature.textColor}>
                     {getIcon(feature.icon)}
                   </span>
@@ -149,15 +143,15 @@ export default function FeaturesSection() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  className="h-8 w-8 text-slate-400 hover:text-white"
                   onClick={() => toggleFeature(index)}
                 >
                   {expandedFeature === index ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
                 </Button>
               </div>
-              <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground">{feature.description}</p>
-              
+              <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+              <p className="text-slate-400">{feature.description}</p>
+
               <AnimatePresence>
                 {expandedFeature === index && (
                   <motion.div
@@ -167,8 +161,8 @@ export default function FeaturesSection() {
                     transition={{ duration: 0.3 }}
                     className="overflow-hidden"
                   >
-                    <div className="pt-4 mt-4 border-t border-gray-800">
-                      <p className="text-foreground">
+                    <div className="pt-4 mt-4 border-t border-slate-700">
+                      <p className="text-slate-300">
                         {feature.expandedContent}
                       </p>
                     </div>
@@ -178,16 +172,15 @@ export default function FeaturesSection() {
             </motion.div>
           ))}
         </div>
-        
-        {/* Integration Features */}
-        <motion.div 
+
+        <motion.div
           className="mt-20 max-w-4xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <div className="bg-card rounded-xl border border-gray-800 p-8 text-center">
+          <div className="glass rounded-3xl p-8 text-center">
             <h3 className="text-2xl font-bold mb-6">Easy Integration with Your Server</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
@@ -196,21 +189,20 @@ export default function FeaturesSection() {
                 { text: "Fully configurable messages and settings", delay: 0.3 },
                 { text: "Low latency web-to-game sync", delay: 0.4 }
               ].map((item, index) => (
-                <motion.div 
-                  key={index} 
+                <motion.div
+                  key={index}
                   className="flex items-center"
                   initial={{ opacity: 0, x: -10 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: item.delay }}
                 >
-                  <Check className="text-green-500 mt-0.5 mr-2 shrink-0" />
-                  <span className="text-left">{item.text}</span>
+                  <Check className="text-emerald-400 mt-0.5 mr-2 shrink-0" />
+                  <span className="text-left text-slate-300">{item.text}</span>
                 </motion.div>
               ))}
-              
             </div>
-            <p className="text-xs text-muted-foreground mt-4">* Importing from other moderation plugins is available upon request</p>
+            <p className="text-xs text-slate-500 mt-4">* Importing from other moderation plugins is available upon request</p>
           </div>
         </motion.div>
       </div>

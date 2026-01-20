@@ -1,12 +1,38 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { MODL } from "@modl-gg/shared-web";
 
-const API_BASE_URL = import.meta.env.DEV
-  ? ''
-  : (import.meta.env.VITE_API_URL || MODL.Domain.HTTPS_API);
+function resolveApiBaseUrl(): string {
+  if (import.meta.env.DEV) {
+    return '';
+  }
+
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (!hostname.endsWith('.pages.dev') && !hostname.includes('localhost')) {
+      const parts = hostname.split('.');
+      if (parts.length >= 2) {
+        const baseDomain = parts.slice(-2).join('.');
+        return `https://api.${baseDomain}`;
+      }
+    }
+  }
+
+  return MODL.Domain.HTTPS_API;
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 export function getApiUrl(path: string): string {
-  return `${API_BASE_URL}${path}`;
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${API_BASE_URL}${normalizedPath}`;
+}
+
+export function getCurrentDomain(): string {
+  return window.location.hostname;
 }
 
 async function throwIfResNotOk(res: Response) {
@@ -24,7 +50,10 @@ export async function apiRequest(
   const fullUrl = url.startsWith('http') ? url : getApiUrl(url);
   const res = await fetch(fullUrl, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers: {
+      ...(data ? { "Content-Type": "application/json" } : {}),
+      "X-Server-Domain": getCurrentDomain(),
+    },
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
@@ -43,6 +72,9 @@ export const getQueryFn: <T>(options: {
     const fullUrl = url.startsWith('http') ? url : getApiUrl(url);
     const res = await fetch(fullUrl, {
       credentials: "include",
+      headers: {
+        "X-Server-Domain": getCurrentDomain(),
+      },
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {

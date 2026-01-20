@@ -5,7 +5,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@modl-gg/shared-web/components/ui/accordion";
-import { MODL } from "@modl-gg/shared-web";
 
 const FAQData = [
   {
@@ -40,31 +39,25 @@ const FAQData = [
 
 export default function FAQSection() {
   return (
-    <section id="faq" className="bg-card/50 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-background to-transparent"></div>
-      
-      <div className="max-w-4xl pt-20 pb-4 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div 
-          className="text-center mb-16"
+    <section id="faq" className="py-24 px-6">
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Got questions? We've got answers.
-          </p>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
         </motion.div>
-        
-        <motion.div 
-          className="space-y-6"
+
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion type="single" collapsible className="space-y-4">
             {FAQData.map((faq, index) => (
               <AccordionItem key={index} value={`item-${index}`} className="border-b-0">
                 <motion.div
@@ -73,12 +66,12 @@ export default function FAQSection() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: 0.1 + (index * 0.05) }}
                 >
-                  <div className="bg-card rounded-xl border border-gray-800 mb-3">
-                    <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                      <span className="text-lg font-medium text-left">{faq.question}</span>
+                  <div className="glass rounded-2xl overflow-hidden">
+                    <AccordionTrigger className="px-6 py-6 hover:no-underline hover:bg-white/5 transition-colors">
+                      <span className="flex-1 text-lg font-semibold text-left">{faq.question}</span>
                     </AccordionTrigger>
                     <AccordionContent className="px-6 pb-6">
-                      <p className="text-muted-foreground">
+                      <p className="text-slate-400 leading-relaxed text-sm">
                         {faq.answer}
                       </p>
                     </AccordionContent>
@@ -88,9 +81,27 @@ export default function FAQSection() {
             ))}
           </Accordion>
         </motion.div>
-      </div>
 
-      <p className="text-muted-foreground mt-0 mb-8 text-center mx-auto">Contact us at {MODL.Email.SUPPORT}</p>
+        <motion.div
+          className="text-center mt-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <p className="text-slate-400">
+            Still have questions?{" "}
+            <a
+              href="https://modl.gg/discord"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Join our Discord community
+            </a>
+          </p>
+        </motion.div>
+      </div>
     </section>
   );
 }
