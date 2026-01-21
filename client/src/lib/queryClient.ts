@@ -51,8 +51,7 @@ export async function apiRequest(
   const res = await fetch(fullUrl, {
     method,
     headers: {
-      ...(data ? { "Content-Type": "application/json" } : {}),
-      "X-Server-Domain": getCurrentDomain(),
+      ...(data ? { "Content-Type": "application/json" } : {})
     },
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
@@ -71,10 +70,7 @@ export const getQueryFn: <T>(options: {
     const url = queryKey[0] as string;
     const fullUrl = url.startsWith('http') ? url : getApiUrl(url);
     const res = await fetch(fullUrl, {
-      credentials: "include",
-      headers: {
-        "X-Server-Domain": getCurrentDomain(),
-      },
+      credentials: "include"
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
