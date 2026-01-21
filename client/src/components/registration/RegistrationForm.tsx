@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useLocation, useRoute } from "wouter";
+import { useState, useRef, useCallback } from "react";
+import { useLocation } from "wouter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -7,13 +7,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@modl-gg/shared-web/components/ui/input";
 import { Button } from "@modl-gg/shared-web/components/ui/button";
 import { Checkbox } from "@modl-gg/shared-web/components/ui/checkbox";
-import { ArrowLeft, AlertCircle } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import SuccessModal from "./SuccessModal";
 import { Label } from "@modl-gg/shared-web/components/ui/label";
-import { Alert, AlertDescription, AlertTitle } from "@modl-gg/shared-web/components/ui/alert";
 import { useToast } from '@modl-gg/shared-web/hooks/use-toast';
 import Turnstile, { TurnstileRef } from "../ui/Turnstile";
+import { cn } from "@modl-gg/shared-web/lib/utils";
 
 
 const BLOCKED_SUBDOMAINS = [
@@ -86,30 +86,29 @@ type RegistrationValues = z.infer<typeof registrationSchema>;
 
 export default function RegistrationForm() {
   const [, navigate] = useLocation();
-  const [, params] = useRoute("/register");
   const { toast } = useToast();
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [registeredDomain, setRegisteredDomain] = useState<string | undefined>(undefined);
-  const [emailError, setEmailError] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileRef>(null);
   const [turnstileReady, setTurnstileReady] = useState(false);
-  
+
   const form = useForm<RegistrationValues>({
     resolver: zodResolver(registrationSchema),
+    mode: "onChange",
     defaultValues: {
       email: "",
       serverName: "",
       customDomain: "",
-      agreeTerms: false as any, // Will be validated by Zod
+      agreeTerms: false as any,
       turnstileToken: "",
     },
   });
 
+  const { formState: { isValid, errors } } = form;
+
   const onSubmit = async (values: RegistrationValues) => {
-    // Ensure Turnstile token is present before submission
     if (!values.turnstileToken) {
-      console.error("Form submitted without Turnstile token");
       toast({
         title: "Security verification required",
         description: "Please complete the security challenge before registering",
@@ -118,11 +117,8 @@ export default function RegistrationForm() {
       return;
     }
 
-    console.log("Submitting registration with Turnstile token:", values.turnstileToken.substring(0, 20) + "...");
     setIsSubmitting(true);
-    setEmailError(null); // Clear any previous email errors
     try {
-      // Always submit with free plan - premium upgrades handled in modl-panel
       const submitData = {
         ...values,
         plan: "free" as const
@@ -130,55 +126,37 @@ export default function RegistrationForm() {
       const res = await apiRequest("POST", "/v1/public/registration", submitData);
       if (res.ok) {
         setShowSuccess(true);
-        setRegisteredDomain(values.customDomain); // Save the custom domain
+        setRegisteredDomain(values.customDomain);
       }
     } catch (error) {
       if (error instanceof Error) {
         const errorMessage = error.message;
+        const colonIndex = errorMessage.indexOf(':');
+        let parsedMessage = errorMessage;
 
-        // Helper function to safely parse error response
-        const parseErrorResponse = (message: string) => {
+        if (colonIndex !== -1) {
+          const responseText = errorMessage.substring(colonIndex + 1).trim();
           try {
-            // Find the colon separator after status code
-            const colonIndex = message.indexOf(':');
-            if (colonIndex === -1) {
-              return { message: message };
-            }
-
-            const responseText = message.substring(colonIndex + 1).trim();
-
-            // Try to parse as JSON first
-            try {
-              return JSON.parse(responseText);
-            } catch {
-              // If not JSON, return as plain text message
-              return { message: responseText };
-            }
+            const parsed = JSON.parse(responseText);
+            parsedMessage = parsed.message || responseText;
           } catch {
-            // Fallback to original message
-            return { message: message };
-          }
-        };
-
-        const parsedError = parseErrorResponse(errorMessage);
-
-        // Check if it's a 409 error (duplicate email)
-        if (errorMessage.startsWith("409:")) {
-          // Check if the error message indicates email already exists
-          if (parsedError.message && parsedError.message.toLowerCase().includes("email")) {
-            setEmailError(parsedError.message);
-            // Scroll to top to show the error
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            return; // Don't show toast for email errors
+            parsedMessage = responseText;
           }
         }
 
-        // For all other errors, use toast
-        toast({
-          title: "Registration failed",
-          description: parsedError.message || "Please try again later",
-          variant: "destructive",
-        });
+        if (errorMessage.startsWith("409:") && parsedMessage.toLowerCase().includes("email")) {
+          form.setError("email", { type: "manual", message: parsedMessage });
+        } else if (errorMessage.startsWith("409:") && parsedMessage.toLowerCase().includes("server name")) {
+          form.setError("serverName", { type: "manual", message: parsedMessage });
+        } else if (errorMessage.startsWith("409:") && parsedMessage.toLowerCase().includes("domain")) {
+          form.setError("customDomain", { type: "manual", message: parsedMessage });
+        } else {
+          toast({
+            title: "Registration failed",
+            description: parsedMessage || "Please try again later",
+            variant: "destructive",
+          });
+        }
       } else {
         toast({
           title: "Registration failed",
@@ -258,22 +236,12 @@ export default function RegistrationForm() {
               </p>
             </div>
             
-            {emailError && (
-              <Alert variant="destructive" className="mb-6">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Registration Error</AlertTitle>
-                <AlertDescription>
-                  {emailError}
-                </AlertDescription>
-              </Alert>
-            )}
-            
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
                   control={form.control}
                   name="email"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel>
                         Admin Email <span className="text-red-500">*</span>
@@ -282,7 +250,12 @@ export default function RegistrationForm() {
                         <Input
                           placeholder="you@example.com"
                           {...field}
-                          className="px-4 py-3 rounded-md bg-card/50 border border-gray-700 text-foreground focus:outline-none focus:border-primary"
+                          className={cn(
+                            "px-4 py-3 rounded-md bg-card/50 border text-foreground focus:outline-none",
+                            fieldState.error
+                              ? "border-red-500 focus:border-red-500"
+                              : "border-gray-700 focus:border-primary"
+                          )}
                         />
                       </FormControl>
                       <FormMessage />
@@ -293,7 +266,7 @@ export default function RegistrationForm() {
                 <FormField
                   control={form.control}
                   name="serverName"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel>
                         Server Name <span className="text-red-500">*</span>
@@ -302,7 +275,12 @@ export default function RegistrationForm() {
                         <Input
                           placeholder="My Awesome Server"
                           {...field}
-                          className="px-4 py-3 rounded-md bg-card/50 border border-gray-700 text-foreground focus:outline-none focus:border-primary"
+                          className={cn(
+                            "px-4 py-3 rounded-md bg-card/50 border text-foreground focus:outline-none",
+                            fieldState.error
+                              ? "border-red-500 focus:border-red-500"
+                              : "border-gray-700 focus:border-primary"
+                          )}
                         />
                       </FormControl>
                       <FormMessage />
@@ -313,7 +291,7 @@ export default function RegistrationForm() {
                 <FormField
                   control={form.control}
                   name="customDomain"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel>
                         Panel Subdomain <span className="text-red-500">*</span>
@@ -323,10 +301,18 @@ export default function RegistrationForm() {
                           <Input
                             placeholder="yourserver"
                             {...field}
-                            className="px-4 py-3 rounded-l-md bg-card/50 border border-gray-700 text-foreground focus:outline-none focus:border-primary"
+                            className={cn(
+                              "px-4 py-3 rounded-l-md bg-card/50 border text-foreground focus:outline-none",
+                              fieldState.error
+                                ? "border-red-500 focus:border-red-500"
+                                : "border-gray-700 focus:border-primary"
+                            )}
                           />
                         </FormControl>
-                        <div className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-700 bg-card/80 text-muted-foreground">
+                        <div className={cn(
+                          "inline-flex items-center px-3 rounded-r-md border border-l-0 bg-card/80 text-muted-foreground",
+                          fieldState.error ? "border-red-500" : "border-gray-700"
+                        )}>
                           .{process.env.APP_DOMAIN || 'modl.gg'}
                         </div>
                       </div>
@@ -393,10 +379,10 @@ export default function RegistrationForm() {
                   )}
                 />
                 
-                <Button 
-                  type="submit" 
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3" 
-                  disabled={isSubmitting}
+                <Button
+                  type="submit"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3"
+                  disabled={isSubmitting || !isValid || !turnstileReady}
                 >
                   {isSubmitting ? "Registering..." : "Register"}
                 </Button>

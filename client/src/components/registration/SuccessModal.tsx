@@ -7,25 +7,12 @@ import { Button } from "@modl-gg/shared-web/components/ui/button";
 interface SuccessModalProps {
   show: boolean;
   onClose: () => void;
-  customDomain?: string; // Make customDomain optional
+  customDomain?: string;
 }
 
 export default function SuccessModal({ show, onClose, customDomain }: SuccessModalProps) {
   const [, navigate] = useLocation();
 
-  // Handle escape key press
-  useEffect(() => {
-    const handleEscapeKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && show) {
-        onClose();
-      }
-    };
-
-    window.addEventListener("keydown", handleEscapeKey);
-    return () => window.removeEventListener("keydown", handleEscapeKey);
-  }, [show, onClose]);
-
-  // Prevent background scrolling when modal is open
   useEffect(() => {
     if (show) {
       document.body.style.overflow = "hidden";
@@ -47,8 +34,7 @@ export default function SuccessModal({ show, onClose, customDomain }: SuccessMod
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="absolute inset-0 bg-background/80 backdrop-blur-sm"
-            onClick={onClose}
-          ></motion.div>
+          />
           
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -83,7 +69,7 @@ export default function SuccessModal({ show, onClose, customDomain }: SuccessMod
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              Your modl account has been created. Check your email for verification and next steps.
+              Your modl.gg account has been created. Check your email for verification and next steps.
             </motion.p>
             
             <motion.div
