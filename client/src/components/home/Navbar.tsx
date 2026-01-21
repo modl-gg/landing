@@ -36,8 +36,8 @@ export default function Navbar() {
             className="text-2xl font-extrabold tracking-tight"
             onClick={(e) => { e.preventDefault(); scrollToSection("top"); }}
           >
-            <span className="text-primary">modl</span>
-            <span className="text-white">.gg</span>
+            <span className="text-primary font-['Audiowide',cursive]">modl</span>
+            <span className="text-white font-['Audiowide',cursive]">.gg</span>
           </a>
         </div>
 
@@ -75,7 +75,7 @@ export default function Navbar() {
 
         <div className="flex items-center gap-4">
           <button
-            className="px-5 py-2.5 bg-primary text-white font-semibold rounded-full hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] transition-all active:scale-95"
+            className="px-5 py-2.5 bg-primary text-white font-semibold rounded-2xl hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] transition-all active:scale-95"
             onClick={goToRegistration}
           >
             Register Free

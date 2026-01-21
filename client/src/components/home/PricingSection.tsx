@@ -19,10 +19,10 @@ const premiumPlanFeatures = [
 
 export default function PricingSection() {
   return (
-    <section id="pricing" className="py-24 px-6">
+    <section id="pricing" className="py-20 px-6">
       <div className="max-w-5xl mx-auto">
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -49,7 +49,7 @@ export default function PricingSection() {
                 <span className="text-slate-500 font-medium text-sm">/month</span>
               </div>
             </div>
-            <div className="flex-grow space-y-4 mb-10">
+            <div className="flex-grow space-y-4">
               {freePlanFeatures.map((feature, index) => (
                 <motion.div
                   key={index}
@@ -64,9 +64,6 @@ export default function PricingSection() {
                 </motion.div>
               ))}
             </div>
-            <button className="w-full py-4 bg-slate-800 border border-slate-700 hover:border-slate-600 text-white font-semibold rounded-xl hover:bg-slate-700 transition-all text-sm mt-auto">
-              Get Started
-            </button>
           </motion.div>
 
           {/* Premium Plan */}
@@ -78,21 +75,14 @@ export default function PricingSection() {
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             <div className="mb-8">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Premium Plan</h3>
-                  <p className="text-slate-400 text-sm">For large communities turning a profit.</p>
-                </div>
-                <span className="text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 px-2 py-1 rounded-full uppercase tracking-wider">
-                  Most Popular
-                </span>
-              </div>
+              <h3 className="text-xl font-bold mb-2">Premium Plan</h3>
+              <p className="text-slate-400 text-sm">For large communities turning a profit.</p>
               <div className="mt-6 flex items-baseline gap-1">
                 <span className="text-5xl font-bold tracking-tight">$9.99</span>
                 <span className="text-slate-500 font-medium text-sm">/month</span>
               </div>
             </div>
-            <div className="flex-grow space-y-4 mb-10">
+            <div className="flex-grow space-y-4">
               {premiumPlanFeatures.map((feature, index) => (
                 <motion.div
                   key={index}
@@ -107,9 +97,6 @@ export default function PricingSection() {
                 </motion.div>
               ))}
             </div>
-            <button className="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-all text-sm mt-auto shadow-lg shadow-primary/20">
-              Upgrade to Premium
-            </button>
           </motion.div>
         </div>
       </div>

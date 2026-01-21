@@ -39,7 +39,7 @@ const FAQData = [
 
 export default function FAQSection() {
   return (
-    <section id="faq" className="py-24 px-6">
+    <section id="faq" className="pt-20 pb-8 px-6">
       <div className="max-w-4xl mx-auto">
         <motion.div
           className="text-center mb-12"
@@ -70,7 +70,7 @@ export default function FAQSection() {
                     <AccordionTrigger className="px-6 py-6 hover:no-underline hover:bg-white/5 transition-colors">
                       <span className="flex-1 text-lg font-semibold text-left">{faq.question}</span>
                     </AccordionTrigger>
-                    <AccordionContent className="px-6 pb-6">
+                    <AccordionContent className="px-6 pb-3 pt-2">
                       <p className="text-slate-400 leading-relaxed text-sm">
                         {faq.answer}
                       </p>
@@ -83,7 +83,7 @@ export default function FAQSection() {
         </motion.div>
 
         <motion.div
-          className="text-center mt-12"
+          className="text-center mt-8"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}

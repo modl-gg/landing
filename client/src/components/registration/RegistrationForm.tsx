@@ -233,10 +233,14 @@ export default function RegistrationForm() {
       <nav className="bg-background/90 backdrop-blur border-b border-gray-800 p-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            <a href="#" onClick={(e) => { e.preventDefault(); backToHome(); }} className="flex items-center">
-              <span className="text-2xl font-bold text-primary font-['Audiowide',cursive]">modl</span>
-              <span className="ml-2 text-xs text-muted-foreground mt-1">BETA</span>
-            </a>
+          <a
+            href="#"
+            className="text-2xl font-extrabold tracking-tight"
+            onClick={(e) => { e.preventDefault(); backToHome(); }}
+          >
+            <span className="text-primary font-['Audiowide',cursive]">modl</span>
+            <span className="text-white font-['Audiowide',cursive]">.gg</span>
+          </a>
             <Button variant="ghost" className="text-muted-foreground hover:text-foreground flex items-center" onClick={backToHome}>
               <ArrowLeft className="mr-1 h-4 w-4" />
               <span>Back to Home</span>

@@ -10,17 +10,17 @@ export default function Footer() {
   };
 
   return (
-    <footer className="py-20 px-6 border-t border-slate-200/10">
+    <footer className="pt-16 pb-8 px-6 border-t border-slate-200/10">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-8">
           <div className="flex flex-col gap-4">
             <a
               href="#"
               className="text-2xl font-extrabold tracking-tight"
               onClick={(e) => { e.preventDefault(); scrollToSection("top"); }}
             >
-              <span className="text-primary">modl</span>
-              <span className="text-white">.gg</span>
+              <span className="text-primary font-['Audiowide',cursive]">modl</span>
+              <span className="text-white font-['Audiowide',cursive]">.gg</span>
             </a>
             <p className="text-slate-500 text-sm max-w-xs">
               First-class moderation and support tools for Minecraft servers.
@@ -82,7 +82,7 @@ export default function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-slate-200/5">
           <p className="text-slate-600 text-xs">
-            © {new Date().getFullYear()} modl.gg. All rights reserved. Not an official Minecraft product.
+            © 2025-2026 byteful studios LLC. All rights reserved.     -     Not affiliated with Mojang Studios or Microsoft.
           </p>
           <div className="flex items-center gap-6">
             <a

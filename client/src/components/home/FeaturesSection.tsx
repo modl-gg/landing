@@ -109,10 +109,10 @@ export default function FeaturesSection() {
   };
 
   return (
-    <section id="features" className="py-24 px-6">
+    <section id="features" className="py-20 px-6">
       <div className="max-w-7xl mx-auto">
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -174,7 +174,7 @@ export default function FeaturesSection() {
         </div>
 
         <motion.div
-          className="mt-20 max-w-4xl mx-auto"
+          className="mt-12 max-w-4xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
