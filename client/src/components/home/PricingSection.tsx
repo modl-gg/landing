@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 
 const freePlanFeatures = [
-  { text: "Up to <b>15</b> staff members" },
+  { text: "Up to <b>5</b> staff members" },
   { text: "<b>Full-feature</b> moderation & support suite" },
   { text: "2GB <b>CDN</b> Storage" },
   { text: "No ads, <b>no gimmicks</b>" },
