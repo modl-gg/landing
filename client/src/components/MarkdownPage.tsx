@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@modl-gg/shared-web/components/ui/button";
-import Navbar from "@/components/home/Navbar";
+import Logo from "./ui/Logo";
+import { ArrowLeft } from "lucide-react";
 
 interface MarkdownPageProps {
   filePath: string;
@@ -39,7 +40,7 @@ export default function MarkdownPage({ filePath, title }: MarkdownPageProps) {
   if (loading) {
     return (
       <div className="min-h-screen bg-background text-foreground font-sans">
-        <Navbar />
+        <Logo clickCallback={() => navigate("/")} />
         <div className="pt-20 flex items-center justify-center min-h-[50vh]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
@@ -53,7 +54,7 @@ export default function MarkdownPage({ filePath, title }: MarkdownPageProps) {
   if (error) {
     return (
       <div className="min-h-screen bg-background text-foreground font-sans">
-        <Navbar />
+        <Logo clickCallback={() => navigate("/")} />
         <div className="pt-20 flex items-center justify-center min-h-[50vh]">
           <div className="text-center">
             <p className="text-red-500 mb-4">Error: {error}</p>
@@ -66,8 +67,16 @@ export default function MarkdownPage({ filePath, title }: MarkdownPageProps) {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
-      <Navbar />
-      <div className="pt-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <nav className="fixed top-0 w-full z-50 border-b border-slate-200/10 bg-background/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <Logo clickCallback={() => navigate("/")} />
+          <Button variant="ghost" className="text-muted-foreground hover:text-foreground flex items-center" onClick={() => navigate("/")}>
+            <ArrowLeft className="mr-1 h-4 w-4" />
+            <span>Back to Home</span>
+          </Button>
+        </div>
+      </nav>
+      <div className="mt-10 pt-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="prose prose-lg prose-invert max-w-none">
           <ReactMarkdown
             components={{

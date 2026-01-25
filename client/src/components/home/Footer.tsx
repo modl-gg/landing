@@ -1,5 +1,6 @@
 import { Github } from "lucide-react";
 import { FaDiscord } from "react-icons/fa";
+import Logo from "../ui/Logo";
 
 export default function Footer() {
   const scrollToSection = (id: string) => {
@@ -14,14 +15,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-8">
           <div className="flex flex-col gap-4">
-            <a
-              href="#"
-              className="text-2xl font-extrabold tracking-tight"
-              onClick={(e) => { e.preventDefault(); scrollToSection("top"); }}
-            >
-              <span className="text-primary font-['Audiowide',cursive]">modl</span>
-              <span className="text-white font-['Audiowide',cursive]">.gg</span>
-            </a>
+          <Logo clickCallback={() => scrollToSection("top")} />
             <p className="text-slate-500 text-sm max-w-xs">
               First-class moderation and support tools for Minecraft servers.
             </p>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
+import Logo from "../ui/Logo";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -30,16 +31,7 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 w-full z-50 border-b border-slate-200/10 bg-background/80 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <div className="flex items-center">
-          <a
-            href="#"
-            className="text-2xl font-extrabold tracking-tight"
-            onClick={(e) => { e.preventDefault(); scrollToSection("top"); }}
-          >
-            <span className="text-primary font-['Audiowide',cursive]">modl</span>
-            <span className="text-white font-['Audiowide',cursive]">.gg</span>
-          </a>
-        </div>
+        <Logo clickCallback={() => scrollToSection("top")} />
 
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
           <a
