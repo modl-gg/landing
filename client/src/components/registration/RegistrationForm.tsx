@@ -382,7 +382,7 @@ export default function RegistrationForm() {
                 <Button
                   type="submit"
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3"
-                  disabled={isSubmitting || !isValid || !turnstileReady}
+                  disabled={isSubmitting}
                 >
                   {isSubmitting ? "Registering..." : "Register"}
                 </Button>
