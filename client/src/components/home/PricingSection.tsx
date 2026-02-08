@@ -4,7 +4,7 @@ import { Check } from "lucide-react";
 const freePlanFeatures = [
   { text: "Up to <b>5</b> staff members" },
   { text: "<b>Full-feature</b> moderation & support suite" },
-  { text: "2GB <b>CDN</b> Storage" },
+  { text: "500MB <b>CDN</b> Storage" },
   { text: "No ads, <b>no gimmicks</b>" },
   { text: "<b>Community</b> & developer support" }
 ];
@@ -12,7 +12,7 @@ const freePlanFeatures = [
 const premiumPlanFeatures = [
   { text: "<b>Unlimited</b> staff members" },
   { text: "<b>Full-feature</b> moderation & support suite" },
-  { text: "200GB <b>CDN</b> Storage" },
+  { text: "200GB <b>CDN</b> Storage ($0.08/GB/month past 200GB)" },
   { text: "Beta <b>AI</b> chat moderation & tickets access" },
   { text: "<b>Priority</b> developer support" }
 ];
