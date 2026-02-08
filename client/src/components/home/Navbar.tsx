@@ -56,6 +56,14 @@ export default function Navbar() {
             FAQ
           </a>
           <a
+            href={import.meta.env.VITE_DOCS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary transition-colors"
+          >
+            Documentation
+          </a>
+          <a
             href="https://modl.gg/discord"
             target="_blank"
             rel="noopener noreferrer"
