@@ -259,10 +259,13 @@ export default function RegistrationForm() {
                         />
                       </FormControl>
                       <FormMessage />
+                      <p className="text-xs text-muted-foreground">
+                        Notice: We are currently unable to send emails to iCloud users. As we work to resolve this issue please use an alternate email provider.
+                      </p>
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="serverName"
