@@ -4,7 +4,7 @@ import { Check } from "lucide-react";
 const freePlanFeatures = [
   { text: "Up to <b>5</b> staff members" },
   { text: "<b>Full-feature</b> moderation & support suite" },
-  { text: "500MB <b>CDN</b> Storage" },
+  { text: "1GB <b>CDN</b> Storage" },
   { text: "No ads, <b>no gimmicks</b>" },
   { text: "<b>Community</b> & developer support" }
 ];
