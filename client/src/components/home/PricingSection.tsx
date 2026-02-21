@@ -20,10 +20,10 @@ const premiumPlanFeatures = [
 const enterprisePlanFeatures = [
   { text: "<b>Dedicated</b> machine in preferable region (isolated data)" },
   { text: "Emails sent from <b>your domain</b>" },
-  { text: "Both maintainers sign <b>NDA</b> contract" },
+  { text: "We sign an <b>NDA</b> contract" },
   { text: "<b>Negotiable</b> rates on storage/AI overage" },
   { text: "<b>99% SLA</b> contract (+ longer term agreements)" },
-  { text: "Custom <b>features</b>, tailored theme and UI" }
+  { text: "Custom features, <b>tailored theme</b> and UI" }
 ];
 
 export default function PricingSection() {
