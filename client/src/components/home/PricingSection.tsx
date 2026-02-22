@@ -119,9 +119,6 @@ export default function PricingSection() {
             <div className="mb-8">
               <h3 className="text-xl font-bold mb-2">Enterprise</h3>
               <p className="text-slate-400 text-sm">All premium features, tailored to your needs.</p>
-              <div className="mt-6 flex items-baseline gap-1">
-                <span className="text-5xl font-bold tracking-tight">Custom</span>
-              </div>
             </div>
             <div className="flex-grow space-y-4">
               {enterprisePlanFeatures.map((feature, index) => (
