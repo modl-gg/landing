@@ -37,59 +37,64 @@ const FAQData = [
   }
 ];
 
+const leftColumn = FAQData.slice(0, 4);
+const rightColumn = FAQData.slice(4);
+
+function FAQColumn({ items, offset }: { items: typeof FAQData; offset: number }) {
+  return (
+    <Accordion type="single" collapsible className="space-y-3">
+      {items.map((faq, index) => (
+        <AccordionItem key={offset + index} value={`item-${offset + index}`} className="border-b-0">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.05 + (index * 0.05) }}
+          >
+            <div className="card-surface overflow-hidden">
+              <AccordionTrigger className="px-5 py-4 hover:no-underline hover:bg-white/[0.02] transition-colors">
+                <span className="mr-2 flex-1 text-sm font-semibold text-left font-display leading-snug">{faq.question}</span>
+              </AccordionTrigger>
+              <AccordionContent className="px-5 pb-4 pt-1">
+                <p className="text-muted-foreground leading-relaxed text-sm">{faq.answer}</p>
+              </AccordionContent>
+            </div>
+          </motion.div>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  );
+}
+
 export default function FAQSection() {
   return (
-    <section id="faq" className="pt-20 pb-8 px-6">
-      <div className="max-w-4xl mx-auto">
+    <section id="faq" className="pt-28 pb-12 px-6 md:px-10">
+      <div className="max-w-5xl mx-auto">
         <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5 }}
+          className="mb-14"
+          initial={{ clipPath: "inset(0 100% 0 0)" }}
+          whileInView={{ clipPath: "inset(0 0% 0 0)" }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4 tracking-tight">
+            Frequently Asked Questions
+          </h2>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          <Accordion type="single" collapsible className="space-y-4">
-            {FAQData.map((faq, index) => (
-              <AccordionItem key={index} value={`item-${index}`} className="border-b-0">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: 0.1 + (index * 0.05) }}
-                >
-                  <div className="glass rounded-2xl overflow-hidden">
-                    <AccordionTrigger className="px-6 py-6 hover:no-underline hover:bg-white/5 transition-colors">
-                      <span className="flex-1 text-lg font-semibold text-left">{faq.question}</span>
-                    </AccordionTrigger>
-                    <AccordionContent className="px-6 pb-3 pt-2">
-                      <p className="text-slate-400 leading-relaxed text-sm">
-                        {faq.answer}
-                      </p>
-                    </AccordionContent>
-                  </div>
-                </motion.div>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+          <FAQColumn items={leftColumn} offset={0} />
+          <FAQColumn items={rightColumn} offset={4} />
+        </div>
 
         <motion.div
-          className="text-center mt-8"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mt-8"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <p className="text-slate-400">
+          <p className="text-muted-foreground text-sm">
             Still have questions?{" "}
             <a
               href="https://modl.gg/discord"

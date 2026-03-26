@@ -1,208 +1,178 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, X, Plus } from "lucide-react";
+import { Check, X, Plus, ShieldCheck, Link, Headphones, Bot, Globe, LayoutDashboard, type LucideIcon } from "lucide-react";
 import { Button } from "@modl-gg/shared-web/components/ui/button";
 
-const features = [
+interface Feature {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  expandedContent: string;
+  hero?: boolean;
+}
+
+const features: Feature[] = [
   {
-    icon: "shield-check",
+    icon: ShieldCheck,
     title: "Smart Punishments",
     description: "Create customizable punishment systems that scale with player behavior patterns.",
     expandedContent: "Our dynamic punishment system utilizes a point system to calculate punishment lengths based on severity (discretionary to staff) and points (based on player history). You can also set custom rules, such as automatically unbanning after a player changes his/her skin or username. These are just some of the features of our smart-punishment system.",
-    bgColor: "bg-primary/20",
-    textColor: "text-primary"
+    hero: true,
   },
   {
-    icon: "link",
+    icon: Link,
     title: "Account Linking",
     description: "Never issue a ban evasion punishment ever again or mangle with ip-bans.",
     expandedContent: "Automatically link accounts and issue alt-blocking punishments. Handle each linked ban independently, allowing for effortless appeals of siblings and other exceptions.",
-    bgColor: "bg-accent/20",
-    textColor: "text-accent"
   },
   {
-    icon: "headphones",
+    icon: Headphones,
     title: "Support Tickets",
     description: "Integrated ticketing system for reports, appeals, bugs, applications, and support",
     expandedContent: "Customize forms, quick-responses, notify players in-game and via email of ticket updates, and monitor how response times. For example, appeals automatically gather punishment information and you can pardon/reduce bans with 1 click.",
-    bgColor: "bg-emerald-500/20",
-    textColor: "text-emerald-400"
   },
   {
-    icon: "bot",
+    icon: Bot,
     title: "AI Auto-Moderation",
     description: "AI systems that detect and respond to chat reports in real-time.",
     expandedContent: "Our highly customizable AI helper is able to analyze chat responses against a custom set of rules and issue real-time or manually-verified punishments with ease. It integrates directly into the tickets feature and requires no additional setup (besides purchasing Premium).",
-    bgColor: "bg-primary/20",
-    textColor: "text-primary"
+    hero: true,
   },
   {
-    icon: "globe",
+    icon: Globe,
     title: "Web Integration",
     description: "Stay in control of your server anywhere you go with the web.",
     expandedContent: "A web interface that allows you to manage your server more efficiently than ever before alongside comprehensive in-game tools.",
-    bgColor: "bg-accent/20",
-    textColor: "text-accent"
   },
   {
-    icon: "layout-dashboard",
+    icon: LayoutDashboard,
     title: "Analytics Dashboard",
     description: "Comprehensive reports and insights on trends and moderator activity.",
     expandedContent: "Our analytics dashboard gives you deep insights into moderation trends, support trends, and staff activity. Take actions such as rolling back staff punishments, adjusting punishment lengths, and more to combat bad actors.",
-    bgColor: "bg-emerald-500/20",
-    textColor: "text-emerald-400"
+    hero: true,
   }
 ];
 
-const getIcon = (iconName: string) => {
-  switch (iconName) {
-    case "shield-check":
-      return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-        </svg>
-      );
-    case "link":
-      return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-        </svg>
-      );
-    case "headphones":
-      return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-        </svg>
-      );
-    case "bot":
-      return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      );
-    case "globe":
-      return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      );
-    case "layout-dashboard":
-      return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-        </svg>
-      );
-    default:
-      return null;
-  }
+const cardReveal = {
+  hidden: { opacity: 0, scale: 0.92, rotateX: 4 },
+  visible: (i: number) => ({
+    opacity: 1,
+    scale: 1,
+    rotateX: 0,
+    transition: { duration: 0.6, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] },
+  }),
 };
 
 export default function FeaturesSection() {
   const [expandedFeature, setExpandedFeature] = useState<number | null>(null);
 
   const toggleFeature = (index: number) => {
-    if (expandedFeature === index) {
-      setExpandedFeature(null);
-    } else {
-      setExpandedFeature(index);
-    }
+    setExpandedFeature(expandedFeature === index ? null : index);
   };
 
   return (
-    <section id="features" className="py-20 px-6">
+    <section id="features" className="py-28 px-6 md:px-10">
       <div className="max-w-7xl mx-auto">
+        {/* Header with clip-path reveal */}
         <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5 }}
+          className="mb-16"
+          initial={{ clipPath: "inset(0 100% 0 0)" }}
+          whileInView={{ clipPath: "inset(0 0% 0 0)" }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Powerful Moderation Tools</h2>
-          <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 tracking-tight">
+            Powerful Moderation Tools
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl">
             Everything you need to keep your Minecraft community safe, engaged, and supported
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              className={`glass rounded-3xl p-8 transition-all duration-300 ${expandedFeature === index ? 'border-primary/40' : ''}`}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.5, delay: index * 0.05 }}
-            >
-              <div className="flex justify-between items-start">
-                <div className={`w-12 h-12 ${feature.bgColor} rounded-2xl flex items-center justify-center mb-6`}>
-                  <span className={feature.textColor}>
-                    {getIcon(feature.icon)}
-                  </span>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-slate-400 hover:text-white"
-                  onClick={() => toggleFeature(index)}
-                >
-                  {expandedFeature === index ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-                </Button>
-              </div>
-              <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-              <p className="text-slate-400">{feature.description}</p>
-
-              <AnimatePresence>
-                {expandedFeature === index && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
+        {/* Bento grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-auto" style={{ perspective: "800px" }}>
+          {features.map((feature, index) => {
+            const Icon = feature.icon;
+            const isExpanded = expandedFeature === index;
+            return (
+              <motion.div
+                key={index}
+                className={`card-surface p-7 ${feature.hero ? "lg:col-span-2" : ""} ${isExpanded ? "card-surface-active" : ""}`}
+                custom={index}
+                variants={cardReveal}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-60px" }}
+              >
+                <div className="flex justify-between items-start mb-5">
+                  <div className="w-11 h-11 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    onClick={() => toggleFeature(index)}
                   >
-                    <div className="pt-4 mt-4 border-t border-slate-700">
-                      <p className="text-slate-300">
-                        {feature.expandedContent}
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
+                    {isExpanded ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                  </Button>
+                </div>
+                <h3 className="font-display text-lg font-bold mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
+
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pt-4 mt-4 border-t border-border">
+                        <p className="text-muted-foreground/70 text-sm leading-relaxed">
+                          {feature.expandedContent}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
         </div>
 
+        {/* Integration card */}
         <motion.div
-          className="mt-12 max-w-4xl mx-auto"
-          initial={{ opacity: 0, y: 20 }}
+          className="mt-8"
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div className="glass rounded-3xl p-8 text-center">
-            <h3 className="text-2xl font-bold mb-6">Easy Integration with Your Server</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="rounded-2xl p-8 bg-gradient-to-br from-primary/[0.06] via-primary/[0.09] to-accent/[0.05] border border-primary/[0.1]">
+            <h3 className="font-display text-xl font-bold mb-6">Easy Integration with Your Server</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { text: "Drag & drop plugin for any platform", delay: 0.1 },
-                { text: "Import from LiteBans and other plugins*", delay: 0.2 },
-                { text: "Fully configurable messages and settings", delay: 0.3 },
-                { text: "Low latency web-to-game sync", delay: 0.4 }
-              ].map((item, index) => (
+                "Drag & drop plugin for any platform",
+                "Import from LiteBans and other plugins*",
+                "Fully configurable messages and settings",
+                "Low latency web-to-game sync"
+              ].map((text, i) => (
                 <motion.div
-                  key={index}
+                  key={i}
                   className="flex items-center"
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: 0, x: -15 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: item.delay }}
+                  transition={{ duration: 0.4, delay: 0.1 + i * 0.06 }}
                 >
-                  <Check className="text-emerald-400 mt-0.5 mr-2 shrink-0" />
-                  <span className="text-left text-slate-300">{item.text}</span>
+                  <Check className="text-emerald-400 mt-0.5 mr-3 shrink-0 w-5 h-5" />
+                  <span className="text-muted-foreground text-sm">{text}</span>
                 </motion.div>
               ))}
             </div>
-            <p className="text-xs text-slate-500 mt-4">* Importing from other moderation plugins is available upon request</p>
+            <p className="text-xs text-muted-foreground/30 mt-5">* Importing from other moderation plugins is available upon request</p>
           </div>
         </motion.div>
       </div>
