@@ -58,7 +58,10 @@ const BLOCKED_SUBDOMAINS = [
   'owner',
   'moderator',
   'mod',
-  'administrator'
+  'administrator',
+  'nexus',
+  'replay',
+  'replays'
 ];
 
 const registrationSchema = z.object({
