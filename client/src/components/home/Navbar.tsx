@@ -2,15 +2,67 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import Logo from "../ui/Logo";
+import Logo from "@/components/ui/Logo";
 
-const navLinks = [
+interface NavLink {
+  label: string;
+  href: string;
+  section?: string;
+  external?: boolean;
+  envKey?: boolean;
+}
+
+const navLinks: NavLink[] = [
   { label: "Features", href: "#features", section: "features" },
   { label: "Pricing", href: "#pricing", section: "pricing" },
   { label: "FAQ", href: "#faq", section: "faq" },
   { label: "Docs", href: "", external: true, envKey: true },
   { label: "Discord", href: "https://modl.gg/discord", external: true },
 ];
+
+const mobileItemVariants = {
+  hidden: { opacity: 0, x: 30 },
+  visible: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: 30 },
+};
+
+const mobileContainerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.06 } },
+  exit: { transition: { staggerChildren: 0.03, staggerDirection: -1 } },
+};
+
+function NavLinkItem({ link, onClick }: { link: NavLink; onClick: () => void }) {
+  const resolvedHref = link.envKey ? import.meta.env.VITE_DOCS_URL : link.href;
+
+  if (link.external) {
+    return (
+      <a
+        href={resolvedHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group relative text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-200"
+      >
+        {link.label}
+        <span className="absolute -bottom-1 left-0 h-[2px] w-0 bg-gradient-to-r from-primary to-accent transition-all duration-300 group-hover:w-full" />
+      </a>
+    );
+  }
+
+  return (
+    <a
+      href={link.href}
+      className="group relative text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-200"
+      onClick={(e) => {
+        e.preventDefault();
+        onClick();
+      }}
+    >
+      {link.label}
+      <span className="absolute -bottom-1 left-0 h-[2px] w-0 bg-gradient-to-r from-primary to-accent transition-all duration-300 group-hover:w-full" />
+    </a>
+  );
+}
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -26,7 +78,9 @@ export default function Navbar() {
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [mobileOpen]);
 
   const scrollToSection = (id: string) => {
@@ -41,44 +95,41 @@ export default function Navbar() {
 
   return (
     <>
-      <nav
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
           isScrolled
-            ? "bg-background/80 backdrop-blur-xl border-b border-white/[0.05]"
-            : "bg-transparent border-b border-transparent"
+            ? "bg-background/80 backdrop-blur-xl backdrop-saturate-150 h-14"
+            : "bg-transparent h-16"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
+        {isScrolled && (
+          <div
+            className="absolute bottom-0 left-0 w-full h-px"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent, hsl(207 90% 54% / 0.3), hsl(273 68% 59% / 0.25), transparent)",
+            }}
+          />
+        )}
+        <div className="max-w-7xl mx-auto px-6 md:px-10 h-full flex items-center justify-between">
           <Logo clickCallback={() => scrollToSection("top")} />
 
-          <div className="hidden md:flex items-center gap-10 text-sm font-medium text-muted-foreground">
-            {navLinks.map((link) =>
-              link.external ? (
-                <a
-                  key={link.label}
-                  href={link.envKey ? import.meta.env.VITE_DOCS_URL : link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-foreground transition-colors duration-200"
-                >
-                  {link.label}
-                </a>
-              ) : (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="hover:text-foreground transition-colors duration-200"
-                  onClick={(e) => { e.preventDefault(); scrollToSection(link.section!); }}
-                >
-                  {link.label}
-                </a>
-              )
-            )}
+          <div className="hidden md:flex items-center gap-10">
+            {navLinks.map((link) => (
+              <NavLinkItem
+                key={link.label}
+                link={link}
+                onClick={() => link.section && scrollToSection(link.section)}
+              />
+            ))}
           </div>
 
           <div className="flex items-center gap-3">
             <button
-              className="hidden md:block px-5 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:shadow-[0_0_24px_hsl(var(--primary)/0.3)] transition-all duration-200 active:scale-95"
+              className="hidden md:block px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-lg hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all duration-200 active:scale-95"
               onClick={goToRegistration}
             >
               Register Free
@@ -92,48 +143,66 @@ export default function Navbar() {
             </button>
           </div>
         </div>
-      </nav>
+      </motion.nav>
 
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl pt-20 px-6"
+            className="fixed inset-0 z-40 bg-background/98 pt-20 px-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="flex flex-col gap-1">
-              {navLinks.map((link) =>
-                link.external ? (
-                  <a
-                    key={link.label}
-                    href={link.envKey ? import.meta.env.VITE_DOCS_URL : link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="py-3.5 text-lg font-medium text-muted-foreground hover:text-foreground transition-colors border-b border-border/30"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    {link.label}
-                  </a>
-                ) : (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="py-3.5 text-lg font-medium text-muted-foreground hover:text-foreground transition-colors border-b border-border/30"
-                    onClick={(e) => { e.preventDefault(); scrollToSection(link.section!); }}
-                  >
-                    {link.label}
-                  </a>
-                )
-              )}
-              <button
-                className="mt-6 w-full py-3.5 bg-primary text-white font-bold rounded-lg hover:shadow-[0_0_24px_hsl(var(--primary)/0.3)] transition-all"
-                onClick={goToRegistration}
-              >
-                Register Free
-              </button>
-            </div>
+            <motion.div
+              className="flex flex-col"
+              variants={mobileContainerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              {navLinks.map((link) => {
+                const resolvedHref = link.envKey
+                  ? import.meta.env.VITE_DOCS_URL
+                  : link.href;
+
+                return (
+                  <motion.div key={link.label} variants={mobileItemVariants}>
+                    {link.external ? (
+                      <a
+                        href={resolvedHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block py-4 text-lg font-medium text-muted-foreground hover:text-foreground transition-colors border-b border-border/20"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <a
+                        href={link.href}
+                        className="block py-4 text-lg font-medium text-muted-foreground hover:text-foreground transition-colors border-b border-border/20"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          scrollToSection(link.section!);
+                        }}
+                      >
+                        {link.label}
+                      </a>
+                    )}
+                  </motion.div>
+                );
+              })}
+
+              <motion.div variants={mobileItemVariants}>
+                <button
+                  className="mt-6 w-full py-3.5 bg-primary text-white font-bold rounded-lg hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all duration-200 active:scale-95"
+                  onClick={goToRegistration}
+                >
+                  Register Free
+                </button>
+              </motion.div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

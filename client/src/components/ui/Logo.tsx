@@ -9,8 +9,8 @@ export default function Logo({ clickCallback }: LogoComponentProps) {
       className="text-2xl font-extrabold tracking-tight group"
       onClick={(e) => { e.preventDefault(); clickCallback(); }}
     >
-      <span className="text-primary font-['Audiowide',cursive] inline-block animate-glitch">modl</span>
-      <span className="text-foreground font-['Audiowide',cursive]">.gg</span>
+      <span className="text-primary font-brand inline-block animate-glitch">modl</span>
+      <span className="text-foreground font-brand">.gg</span>
     </a>
   </div>
 }
