@@ -7,12 +7,12 @@ import {
 } from "@modl-gg/shared-web/components/ui/accordion";
 
 const FAQData = [
-  { question: "Why switch to modl.gg?", answer: "Tools more powerful than any publicly available Minecraft moderation setup. Point-based dynamic punishments, AI automation for reports and tickets, a web panel for cross-referencing data, and easy migration from existing setups. Free forever." },
-  { question: "How easy is it to install?", answer: "Register your server, install the plugin on your proxy or server, plug in the API key, and you're good to go!" },
-  { question: "Can I customize moderation rules?", answer: "Everything is fully customizable — from locale messages to punishment types — with smart defaults out of the box." },
+  { question: "Why switch to modl.gg?", answer: "modl.gg is more powerful than any publicly available Minecraft moderation setup. Smart punishments, AI automation, replays, beautiful in-game GUIs, a web panel, easy migration from existing setups, and much more. Free forever." },
+  { question: "How easy is it to install?", answer: <>The installation process is incredibly simple, taking 1-10 minutes depending on your setup. Read more at <a href="https://docs.modl.gg/installation" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">docs.modl.gg/installation</a></> },
+  { question: "Can I customize moderation rules?", answer: "Everything is fully customizable, from locale messages to punishment types; all with smart defaults out of the box." },
   { question: "Can I migrate from LiteBans?", answer: "Yes! We offer migration tools to import all punishments and player data from LiteBans." },
   { question: "What server types are supported?", answer: "Spigot, Paper, Folia, Velocity, and BungeeCord (including forks). Forge/Fabric support is in progress." },
-  { question: "Where can I report issues?", answer: "Email us or join our Discord at modl.gg/discord." },
+  { question: "Where can I report issues?", answer: <>Email us or join our <a href="https://modl.gg/discord" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Discord</a></> },
 ];
 
 const leftColumn = FAQData.slice(0, 3);

@@ -129,7 +129,6 @@ export const useTurnstile = (options: UseTurnstileOptions) => {
     }
 
     try {
-      console.log('Rendering Turnstile widget with sitekey:', options.sitekey?.substring(0, 20) + '...');
       const widgetId = window.turnstile.render(containerRef.current, {
         sitekey: options.sitekey,
         theme: options.theme || 'auto',
@@ -141,27 +140,21 @@ export const useTurnstile = (options: UseTurnstileOptions) => {
         'retry-interval': options['retry-interval'],
         'refresh-expired': options['refresh-expired'] || 'auto',
         callback: (token: string) => {
-          console.log('Turnstile callback triggered with token:', token?.substring(0, 20) + '...');
           onSuccessRef.current?.(token);
         },
         'error-callback': () => {
-          console.error('Turnstile error callback triggered');
           onErrorRef.current?.();
         },
         'expired-callback': () => {
-          console.log('Turnstile expired callback triggered');
           onExpiredRef.current?.();
         },
         'after-interactive-callback': () => {
-          console.log('Turnstile after-interactive callback triggered');
           onLoadRef.current?.();
         },
       });
       
-      console.log('Turnstile widget rendered with ID:', widgetId);
       widgetIdRef.current = widgetId;
-    } catch (error) {
-      console.error('Failed to render Turnstile widget:', error);
+    } catch {
       onErrorRef.current?.();
     }
   }, [options.sitekey, options.theme, options.size, options.action, options.appearance, options.execution, options.retry, options['retry-interval'], options['refresh-expired']]);
@@ -209,8 +202,7 @@ export const useTurnstile = (options: UseTurnstileOptions) => {
             isLoadedRef.current = true;
           }
         }, 100);
-      } catch (error) {
-        console.error('Failed to load Turnstile:', error);
+      } catch {
         if (mounted) {
           onErrorRef.current?.();
         }

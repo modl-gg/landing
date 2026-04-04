@@ -1,5 +1,5 @@
 interface LogoComponentProps {
-    clickCallback: Function;
+    clickCallback: () => void;
 }
 
 export default function Logo({ clickCallback }: LogoComponentProps) {

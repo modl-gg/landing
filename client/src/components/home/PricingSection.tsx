@@ -17,7 +17,7 @@ const premiumPlanFeatures: ReactNode[] = [
   <><b>Full-feature</b> moderation & support suite</>,
   <>200GB <b>CDN</b> Storage ($0.08/GB/month past 200GB)</>,
   <>Use a <b>custom domain</b> name</>,
-  <>Beta <b>AI</b> chat moderation & tickets access</>,
+  <>Beta <b>AI</b> chat moderation & cheat-analysis access</>,
   <><b>Priority</b> developer support</>,
 ];
 
@@ -53,7 +53,7 @@ export default function PricingSection() {
           transition={{ duration: 0.5 }}
         >
           <h2 className="font-display text-2xl font-bold tracking-tight">Pricing</h2>
-          <p className="text-sm text-muted-foreground">Free forever. Fair when you scale.</p>
+          <p className="text-sm text-muted-foreground">Free forever. Fair forever when you scale.</p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">

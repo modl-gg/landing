@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { useLocation } from "wouter";
+import { Link } from "wouter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -14,7 +14,6 @@ import { Label } from "@modl-gg/shared-web/components/ui/label";
 import { useToast } from '@modl-gg/shared-web/hooks/use-toast';
 import Turnstile, { TurnstileRef } from "../ui/Turnstile";
 import { cn } from "@modl-gg/shared-web/lib/utils";
-
 
 const BLOCKED_SUBDOMAINS = [
   'panel',
@@ -88,13 +87,11 @@ const registrationSchema = z.object({
 type RegistrationValues = z.infer<typeof registrationSchema>;
 
 export default function RegistrationForm() {
-  const [, navigate] = useLocation();
   const { toast } = useToast();
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [registeredDomain, setRegisteredDomain] = useState<string | undefined>(undefined);
+  const [registeredDomain, setRegisteredDomain] = useState<string>();
   const turnstileRef = useRef<TurnstileRef>(null);
-  const [turnstileReady, setTurnstileReady] = useState(false);
 
   const form = useForm<RegistrationValues>({
     resolver: zodResolver(registrationSchema),
@@ -107,8 +104,6 @@ export default function RegistrationForm() {
       turnstileToken: "",
     },
   });
-
-  const { formState: { isValid, errors } } = form;
 
   const onSubmit = async (values: RegistrationValues) => {
     if (!values.turnstileToken) {
@@ -172,21 +167,13 @@ export default function RegistrationForm() {
     }
   };
 
-  const backToHome = () => {
-    navigate("/");
-  };
-
   const handleTurnstileSuccess = useCallback((token: string) => {
-    console.log("Turnstile verification successful, token:", token?.substring(0, 20) + "...");
     form.setValue("turnstileToken", token);
     form.clearErrors("turnstileToken");
-    setTurnstileReady(true);
   }, [form]);
 
   const handleTurnstileError = useCallback(() => {
-    console.log("Turnstile verification failed");
     form.setValue("turnstileToken", "");
-    setTurnstileReady(false);
     toast({
       title: "Verification failed",
       description: "Please try again",
@@ -195,17 +182,9 @@ export default function RegistrationForm() {
   }, [form, toast]);
 
   const handleTurnstileExpired = useCallback(() => {
-    console.log("Turnstile verification expired, resetting...");
     form.setValue("turnstileToken", "");
-    setTurnstileReady(false);
-    // Reset the widget to get a new challenge
     turnstileRef.current?.reset();
   }, [form]);
-
-  const handleTurnstileLoad = useCallback(() => {
-    // Turnstile loaded and ready for interaction
-    console.log("Turnstile widget loaded");
-  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -214,18 +193,16 @@ export default function RegistrationForm() {
       <nav className="bg-background/90 backdrop-blur border-b border-gray-800 p-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-          <a
-            href="#"
-            className="text-2xl font-extrabold tracking-tight"
-            onClick={(e) => { e.preventDefault(); backToHome(); }}
-          >
-            <span className="text-primary font-['Audiowide',cursive]">modl</span>
-            <span className="text-white font-['Audiowide',cursive]">.gg</span>
-          </a>
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground flex items-center" onClick={backToHome}>
-              <ArrowLeft className="mr-1 h-4 w-4" />
-              <span>Back to Home</span>
-            </Button>
+          <Link href="/" className="text-2xl font-extrabold tracking-tight">
+            <span className="text-primary font-brand">modl</span>
+            <span className="text-white font-brand">.gg</span>
+          </Link>
+            <Link href="/">
+              <Button variant="ghost" className="text-muted-foreground hover:text-foreground flex items-center">
+                <ArrowLeft className="mr-1 h-4 w-4" />
+                <span>Back to Home</span>
+              </Button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -235,7 +212,7 @@ export default function RegistrationForm() {
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold mb-2">Register your server</h2>
               <p className="text-muted-foreground">
-                Create a panel for your server and start using in minutes with our free plan.
+                You can also register using the setup wizard in Minecraft plugin installation.
               </p>
             </div>
             
@@ -262,9 +239,6 @@ export default function RegistrationForm() {
                         />
                       </FormControl>
                       <FormMessage />
-                      <p className="text-xs text-muted-foreground">
-                        Notice: We are currently unable to send emails to iCloud users. As we work to resolve this issue please use an alternate email provider.
-                      </p>
                     </FormItem>
                   )}
                 />
@@ -354,7 +328,6 @@ export default function RegistrationForm() {
                   )}
                 />
 
-                {/* Turnstile Component - Visible widget for better reliability */}
                 <div className="flex justify-center">
                   <Turnstile
                     ref={turnstileRef}
@@ -362,7 +335,6 @@ export default function RegistrationForm() {
                     onSuccess={handleTurnstileSuccess}
                     onError={handleTurnstileError}
                     onExpired={handleTurnstileExpired}
-                    onLoad={handleTurnstileLoad}
                     invisible={false}
                     theme="auto"
                     action="register"
@@ -371,7 +343,6 @@ export default function RegistrationForm() {
                   />
                 </div>
 
-                {/* Hidden field for Turnstile token */}
                 <FormField
                   control={form.control}
                   name="turnstileToken"

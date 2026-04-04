@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle } from 'react';
+import { forwardRef, useImperativeHandle } from 'react';
 import { useTurnstile } from '@/hooks/useTurnstile';
 
 export interface TurnstileRef {

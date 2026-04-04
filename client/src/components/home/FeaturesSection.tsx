@@ -1,22 +1,25 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, type ReactNode } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { X, ChevronDown } from "lucide-react";
 
 interface Feature {
   title: string;
   description: string;
-  expandedDescription: string;
+  expandedDescription: ReactNode;
   media: string;
   extraMedia?: string[];
   hasImage: boolean;
   gridClass: string;
 }
 
+const B = ({ children }: { children: ReactNode }) => <span className="text-foreground/90 font-medium">{children}</span>;
+const Li = ({ children }: { children: ReactNode }) => <li className="pl-1">{children}</li>;
+
 const features: Feature[] = [
   {
     title: "Smart Punishments",
-    description: "Points-based severity scaling with auto-rules and consecutive stacking.",
-    expandedDescription: "Our dynamic punishment system utilizes a point system to calculate punishment lengths based on severity (discretionary to staff) and points (based on player history). You can also set custom rules, such as automatically unbanning after a player changes his/her skin or username. Stack multiple bans/mutes that execute consecutively — start time is when the player attempts to login unimpeded by other bans/mutes. Traditional, manual punishments also exist (ban, tempban, mute, tempmute, kick, blacklist). Import all bans, mutes, and player data (IPs) from LiteBans seamlessly.",
+    description: "Dynamically scale punishments based on discretionary leniencies and past offenses.",
+    expandedDescription: <><p className="mb-3">Designed to fairly and consistently sanction players whilst maintaining moderator discretion.</p><ul className="list-disc list-outside ml-4 space-y-1.5"><Li>Fully customizable <B>point system</B> to designate low, medium, and habitual designations for both Gameplay and Social offenses</Li><Li>Fully customizable punishment durations for each <B>severity</B> (lenient, normal, severe) and each <B>offender status</B> (low, medium, habitual)</Li><Li>Issue punishments for bad usernames and skins that <B>automatically pardon</B> when a player changes their skin/username</Li><Li>Ability to make a ban "stat-wiping" that issues a command on the server upon expiration to reset stats</Li><Li>Full modification system for <B>changing durations</B> and <B>pardoning</B> (remove points)</Li><Li>Full evidence system for <B>uploading files</B> and linking to other sites (YouTube, Imgur, etc)</Li><Li>8-char alphanumeric ID system for streamlined appeals - staff see all punishment details and can pardon/change duration without leaving the page</Li><Li>Bans on offline players wait until a successful login to start the expiration countdown</Li><Li>Stack multiple bans/mutes that execute <B>consecutively</B> (one after the other becomes inactive)</Li><Li>Traditional, manual punishments also exist (ban, tempban, mute, tempmute, kick, blacklist)</Li><Li>Import all bans, mutes, and player data (IPs) from <B>LiteBans</B> seamlessly</Li></ul></>,
     media: "https://i.imgur.com/jOJAeO2.gif",
     extraMedia: ["https://cdn.modl.gg/assets/modl-image-8.png"],
     hasImage: true,
@@ -25,7 +28,7 @@ const features: Feature[] = [
   {
     title: "Account Linking",
     description: "Auto-detect alts via IP tracking. Handle each linked ban independently.",
-    expandedDescription: "Link accounts that have the same non-proxy IP logins OR have shared proxy logins within 2 hours of each other. This system tracks logins even if denied by a banned screen, allowing you to link accounts whenever a bad actor screws up and attempts to login on a banned account before logging into their ban evading account. Handle each linked ban independently — was there a mistake? Public internet or sibling? Easily handle the linked ban on a specific account without changing the initial ban. Linked bans expire when the original ban expires automatically.",
+    expandedDescription: <ul className="list-disc list-outside ml-4 space-y-1.5"><Li>See player info (playtime, session details, country), notes, history, alts, reports in sleek in-game and web UIs</Li><Li><B>Link accounts</B> that have the same non-proxy IP logins OR shared proxy logins within 2 hours of each other</Li><Li>Tracks logins even if denied by a banned screen - link accounts whenever a <B>bad actor</B> attempts to login on a banned account before logging into their evading account</Li><Li>Handle each linked ban <B>independently</B> - mistake? Public internet or sibling? Easily manage without changing the initial ban</Li><Li>Linked bans expire when the original ban expires automatically</Li></ul>,
     media: "https://i.imgur.com/4Qmt2wt.gif",
     extraMedia: ["https://cdn.modl.gg/assets/modl-image-9.png"],
     hasImage: true,
@@ -34,7 +37,7 @@ const features: Feature[] = [
   {
     title: "Player Reporting",
     description: "Auto-snapshot chat, upload evidence, punish from the ticket page.",
-    expandedDescription: "Automatically snapshot full context chat-logs when someone is chat-reported. Allow players to upload files or link external evidence to all reports. Issue punishments from reports without leaving the ticket page. Link tickets to punishments that will auto-close the ticket and send a response letting the reporter know the offender was punished. Sort online players by number of reports to identify potential rule breakers across your network. Also integrates with modl-anticheat-bridge for automatic anticheat report creation.",
+    expandedDescription: <ul className="list-disc list-outside ml-4 space-y-1.5"><Li>Automatically <B>snapshot</B> full context chat-logs when someone is chat-reported</Li><Li>Allow players to <B>upload files</B> or link external evidence to all reports</Li><Li>Issue punishments from reports without leaving the ticket page</Li><Li>Link tickets to punishments that will auto-close the ticket and notify the reporter that the offender was punished</Li><Li>Integrates with <B>modl-anticheat-bridge</B> - anti-cheat automatically creates reports based on flags</Li><Li>Sort online players by number of reports to identify potential rule breakers across your network</Li></ul>,
     media: "https://i.imgur.com/ODXHpjC.gif",
     extraMedia: ["https://cdn.modl.gg/assets/modl-image-10.png"],
     hasImage: true,
@@ -43,7 +46,7 @@ const features: Feature[] = [
   {
     title: "AI Moderation",
     description: "Context-aware AI on reported messages. Auto-punish or staff-approve.",
-    expandedDescription: "To not pester players and use excessive tokens, AI chat moderation only scans messages that are chat-reported. Constantly evolving system prompts to improve accuracy — the AI is context-aware of Minecraft (e.g: \"i'm going to kill you with a fireball\" is a game term, not an IRL death threat). Configure AI to look for specific things and execute punishments automatically or make suggestions for staff approval.",
+    expandedDescription: <ul className="list-disc list-outside ml-4 space-y-1.5"><Li>AI chat moderation <B>only scans messages that are chat-reported</B> - no mass-scanning, no annoying false auto-mutes, no excessive token usage</Li><Li>Constantly evolving system prompts to improve <B>accuracy</B> - context-aware of Minecraft (e.g. "i'm going to kill you with a fireball" is a game term, not an IRL death threat)</Li><Li>Configure AI to look for specific things and execute punishments <B>automatically</B> or make suggestions for staff approval</Li></ul>,
     media: "https://cdn.modl.gg/assets/modl-image-11.png",
     hasImage: true,
     gridClass: "",
@@ -51,7 +54,7 @@ const features: Feature[] = [
   {
     title: "Audit & Analytics",
     description: "Rollback actions, track trends, manage evidence from one dashboard.",
-    expandedDescription: "Audit and rollback any staff punishment actions. See statistics on average ticket response times and staff activity (ticket responses, punishments issued, etc). See trends for different types of punishments and ticket data. Manage all files uploaded (evidence, ticket attachments): easily view, search, filter, delete, and download all files from a centralized dashboard.",
+    expandedDescription: <ul className="list-disc list-outside ml-4 space-y-1.5"><Li>Audit and <B>rollback</B> any staff punishment actions</Li><Li>See statistics on average ticket response times and <B>staff activity</B> (ticket responses, punishments issued, etc)</Li><Li>See <B>trends</B> for different types of punishments and ticket data</Li><Li>Manage all files uploaded (evidence, ticket attachments): easily view, search, filter, delete, and download all files</Li></ul>,
     media: "https://i.imgur.com/gj49NbH.gif",
     extraMedia: ["https://cdn.modl.gg/assets/modl-image-6.png"],
     hasImage: true,
@@ -60,7 +63,7 @@ const features: Feature[] = [
   {
     title: "Support Tickets",
     description: "Custom forms, quick-responses, in-game and email notifications.",
-    expandedDescription: "Fully customizable knowledgebase homepage with logo, external link, and sections. Searchable markdown article support — write your rules, guidelines, and support articles with ease. Create fully custom forms for bug reports, support tickets, and staff applications with conditional sections. Customizable quick-response buttons to significantly streamline efficiency. Send in-game and email notifications for when staff respond to a player's ticket. Staff members are automatically subscribed to tickets they respond in.",
+    expandedDescription: <><p className="mb-3">Use <B>your own domain</B> (recommended: support.yourserver.com)</p><ul className="list-disc list-outside ml-4 space-y-1.5"><Li><B>Fully customizable</B> knowledgebase homepage with logo, external link, and sections</Li><Li>Searchable markdown article support - write <B>your</B> rules, guidelines, and support articles with ease</Li><Li>Create fully <B>custom forms</B> for bug reports, support tickets, and staff applications: reveal hidden sections based on answer to multiple-choice questions</Li><Li>Customizable <B>quick-response buttons</B> to significantly streamline efficiency and keep responses consistent</Li><Li>Send in-game and email <B>notifications</B> for when staff respond to a player's ticket</Li><Li>Browser cookies verify that responses in tickets are from the same initial responder</Li><Li>Staff members are automatically <B>subscribed</B> to tickets they respond in and can easily track updates in their home feed</Li></ul></>,
     media: "https://cdn.modl.gg/assets/modl-image-7.png",
     hasImage: true,
     gridClass: "",
@@ -68,7 +71,7 @@ const features: Feature[] = [
   {
     title: "Web Dashboard",
     description: "Manage your server from anywhere with a powerful web interface.",
-    expandedDescription: "A web interface that allows you to manage your server more efficiently than ever before alongside comprehensive in-game tools. Invite your staff team and fully customize their roles and permissions (permission nodes for each punishment type). Set each staff member's Minecraft account so that permissions and punishments are synced between panel and in-game. Make modl yours: upload a custom logo, favicon, homepage image, and set your custom domain.",
+    expandedDescription: <ul className="list-disc list-outside ml-4 space-y-1.5"><Li>Invite your staff team and fully customize their <B>roles</B> and permissions (permission nodes for each punishment type)</Li><Li>Set each staff member's Minecraft account so that permissions and punishments are <B>synced</B> between panel and in-game</Li><Li>Make modl yours: upload a custom logo, favicon, homepage image, and set your custom domain</Li><Li>Everything is fully <B>customizable</B>, from Minecraft plugin locale to ticket forms and punishment types</Li></ul>,
     media: "https://cdn.modl.gg/assets/modl-image-3.png",
     extraMedia: ["https://cdn.modl.gg/assets/modl-image-2.png"],
     hasImage: true,
@@ -77,7 +80,7 @@ const features: Feature[] = [
   {
     title: "Player Profiles",
     description: "Full player info, session history, notes, and alt accounts at a glance.",
-    expandedDescription: "See player info (playtime, session details, country), notes, history, alts, and reports in sleek in-game and web UIs with windows for many open players on web. Full evidence system for uploading files and linking to other sites (YouTube, Imgur, etc). 8-char alphanumeric ID system for streamlined appeal system — staff see all punishment details and can pardon/change duration without leaving the page.",
+    expandedDescription: <ul className="list-disc list-outside ml-4 space-y-1.5"><Li>See player info (playtime, session details, country), notes, history, alts, reports in sleek in-game and web UIs</Li><Li>Open <B>multiple player windows</B> simultaneously on the web panel</Li><Li>Full evidence system for <B>uploading files</B> and linking to other sites (YouTube, Imgur, etc)</Li><Li>8-char alphanumeric ID system for streamlined appeals - staff see all punishment details and can <B>pardon/change duration</B> without leaving the page</Li><Li><B>Customize</B> the appeal page for each different punishment type</Li></ul>,
     media: "https://cdn.modl.gg/assets/modl-image-9.png",
     hasImage: true,
     gridClass: "",
@@ -85,7 +88,7 @@ const features: Feature[] = [
   {
     title: "Fully Open-Source",
     description: "Transparent codebase under AGPL-3.0. Inspect, contribute, and trust the code.",
-    expandedDescription: "modl.gg's Minecraft plugin is fully open-source under the AGPL-3.0 license. You can inspect every line of code that runs on your server, contribute improvements, and verify security yourself. We believe in transparency — your server's moderation tools should be auditable and trustworthy. Community contributions are welcome via GitHub.",
+    expandedDescription: <ul className="list-disc list-outside ml-4 space-y-1.5"><Li>Minecraft plugin is fully open-source under the <B>AGPL-3.0</B> license</Li><Li>Inspect every line of code that runs on your server</Li><Li>Contribute improvements and verify security yourself</Li><Li>Community contributions welcome via <B>GitHub</B></Li></ul>,
     media: "",
     hasImage: false,
     gridClass: "",
@@ -93,7 +96,7 @@ const features: Feature[] = [
   {
     title: "Web-Viewable Replays",
     description: "Review reported incidents with browser-based replay playback.",
-    expandedDescription: "When integrated with compatible recording plugins, modl.gg lets staff review reported incidents through web-viewable replays directly in the browser. No need to download replay files or open Minecraft — watch what happened from the comfort of your web panel. Perfect for reviewing combat reports, griefing incidents, and other disputes that require visual context.",
+    expandedDescription: <ul className="list-disc list-outside ml-4 space-y-1.5"><Li>Review reported incidents through <B>web-viewable replays</B> directly in the browser</Li><Li>No need to download replay files or open Minecraft</Li><Li>Perfect for reviewing combat reports, griefing incidents, and disputes that require visual context</Li><Li>Integrates with compatible recording plugins</Li></ul>,
     media: "",
     hasImage: false,
     gridClass: "",
@@ -101,7 +104,7 @@ const features: Feature[] = [
   {
     title: "In-Game Control Menu",
     description: "Full moderation GUI accessible without leaving the game.",
-    expandedDescription: "Access the full moderation suite directly in-game through intuitive GUI menus. View player profiles, issue punishments, manage tickets, and review reports without ever needing to tab out to a browser. Designed for staff members who are actively moderating and need quick access to tools while playing. All actions sync instantly with the web panel.",
+    expandedDescription: <ul className="list-disc list-outside ml-4 space-y-1.5"><Li>Access the full moderation suite directly in-game through intuitive <B>GUI menus</B></Li><Li>View player profiles, issue punishments, manage tickets, and review reports</Li><Li>Designed for staff actively moderating who need <B>quick access</B> while playing</Li><Li>All actions sync instantly with the web panel</Li></ul>,
     media: "",
     hasImage: false,
     gridClass: "",
@@ -109,7 +112,7 @@ const features: Feature[] = [
   {
     title: "Network-Wide Staff Suite",
     description: "Unified moderation across your entire server network.",
-    expandedDescription: "modl.gg works across your entire network — whether you're running BungeeCord, Velocity, or standalone servers. Punishments, tickets, reports, and staff permissions are all synchronized. Staff can moderate from any server in your network, and players can't escape punishments by switching servers. Supports Spigot, Paper, Folia, Velocity, and BungeeCord (including forks).",
+    expandedDescription: <ul className="list-disc list-outside ml-4 space-y-1.5"><Li>Works across your entire network - <B>BungeeCord, Velocity</B>, or standalone servers</Li><Li>Punishments, tickets, reports, and staff permissions are all <B>synchronized</B></Li><Li>Staff can moderate from any server - players can't escape punishments by switching servers</Li><Li>Supports Spigot, Paper, Folia, Velocity, and BungeeCord (including forks)</Li></ul>,
     media: "",
     hasImage: false,
     gridClass: "",
@@ -117,7 +120,7 @@ const features: Feature[] = [
   {
     title: "Fully Configurable",
     description: "Every message, rule, and behavior is customizable to your needs.",
-    expandedDescription: "Everything is fully customizable, from Minecraft plugin locale to ticket forms and punishment types. Smart, thought-out defaults mean you can get started instantly, but every detail can be tweaked. Customize punishment types and point values, ticket form fields with conditional logic, quick-response templates, notification preferences, role permissions with granular permission nodes, and the look and feel of your public-facing pages.",
+    expandedDescription: <ul className="list-disc list-outside ml-4 space-y-1.5"><Li>Everything is fully customizable - from Minecraft plugin <B>locale</B> to ticket forms and punishment types</Li><Li>Smart, thought-out <B>defaults</B> mean you can get started instantly</Li><Li>Customize punishment types and point values</Li><Li>Ticket form fields with <B>conditional logic</B></Li><Li>Quick-response templates and notification preferences</Li><Li>Role permissions with <B>granular permission nodes</B></Li><Li>Customize the look and feel of your public-facing pages</Li></ul>,
     media: "",
     hasImage: false,
     gridClass: "lg:col-span-2",
@@ -281,7 +284,7 @@ function ExpandedPanel({ feature, onClose }: { feature: Feature; onClose: () => 
 
           <div className="relative">
             <h2 className="font-display text-xl font-bold tracking-tight mb-2">{feature.title}</h2>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-5 max-w-3xl">{feature.expandedDescription}</p>
+            <div className="text-sm text-muted-foreground leading-relaxed mb-5 max-w-3xl">{feature.expandedDescription}</div>
           </div>
 
           {allMedia.length > 0 && (
@@ -369,7 +372,7 @@ export default function FeaturesSection() {
           </h1>
           <span className="w-px h-6 bg-white/10 shrink-0 hidden sm:block" />
           <p className="text-sm text-muted-foreground/70 leading-relaxed">
-            The all-in-one moderation and support suite for Minecraft servers — smart punishments, AI moderation, ticketing, analytics, and a full web dashboard.
+            The comprehensive moderation and support suite for Minecraft servers: smart punishments, web replays, efficient ticketing, robust analytics, and a full web dashboard.
           </p>
         </motion.div>
 
