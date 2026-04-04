@@ -1,216 +1,343 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Check, X, Plus, ShieldCheck, Link, Headphones, Bot, Globe, LayoutDashboard, type LucideIcon } from "lucide-react";
-import { Button } from "@modl-gg/shared-web/components/ui/button";
+import { useRef, useState, useEffect } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
 
 interface Feature {
-  icon: LucideIcon;
   title: string;
   description: string;
-  expandedContent: string;
-  hero?: boolean;
+  expandedDescription: string;
+  media: string;
+  extraMedia?: string[];
+  hasImage: boolean;
+  gridClass: string;
 }
 
 const features: Feature[] = [
   {
-    icon: ShieldCheck,
     title: "Smart Punishments",
-    description: "Create customizable punishment systems that scale with player behavior patterns.",
-    expandedContent: "Our dynamic punishment system utilizes a point system to calculate punishment lengths based on severity (discretionary to staff) and points (based on player history). You can also set custom rules, such as automatically unbanning after a player changes his/her skin or username. These are just some of the features of our smart-punishment system.",
-    hero: true,
+    description: "Points-based severity scaling with auto-rules and consecutive stacking.",
+    expandedDescription: "Our dynamic punishment system utilizes a point system to calculate punishment lengths based on severity (discretionary to staff) and points (based on player history). You can also set custom rules, such as automatically unbanning after a player changes his/her skin or username. Stack multiple bans/mutes that execute consecutively — start time is when the player attempts to login unimpeded by other bans/mutes. Traditional, manual punishments also exist (ban, tempban, mute, tempmute, kick, blacklist). Import all bans, mutes, and player data (IPs) from LiteBans seamlessly.",
+    media: "https://i.imgur.com/jOJAeO2.gif",
+    extraMedia: ["https://cdn.modl.gg/assets/modl-image-8.png"],
+    hasImage: true,
+    gridClass: "lg:col-span-2",
   },
   {
-    icon: Link,
     title: "Account Linking",
-    description: "Never issue a ban evasion punishment ever again or mangle with ip-bans.",
-    expandedContent: "Automatically link accounts and issue alt-blocking punishments. Handle each linked ban independently, allowing for effortless appeals of siblings and other exceptions.",
+    description: "Auto-detect alts via IP tracking. Handle each linked ban independently.",
+    expandedDescription: "Link accounts that have the same non-proxy IP logins OR have shared proxy logins within 2 hours of each other. This system tracks logins even if denied by a banned screen, allowing you to link accounts whenever a bad actor screws up and attempts to login on a banned account before logging into their ban evading account. Handle each linked ban independently — was there a mistake? Public internet or sibling? Easily handle the linked ban on a specific account without changing the initial ban. Linked bans expire when the original ban expires automatically.",
+    media: "https://i.imgur.com/4Qmt2wt.gif",
+    extraMedia: ["https://cdn.modl.gg/assets/modl-image-9.png"],
+    hasImage: true,
+    gridClass: "",
   },
   {
-    icon: Headphones,
+    title: "Player Reporting",
+    description: "Auto-snapshot chat, upload evidence, punish from the ticket page.",
+    expandedDescription: "Automatically snapshot full context chat-logs when someone is chat-reported. Allow players to upload files or link external evidence to all reports. Issue punishments from reports without leaving the ticket page. Link tickets to punishments that will auto-close the ticket and send a response letting the reporter know the offender was punished. Sort online players by number of reports to identify potential rule breakers across your network. Also integrates with modl-anticheat-bridge for automatic anticheat report creation.",
+    media: "https://i.imgur.com/ODXHpjC.gif",
+    extraMedia: ["https://cdn.modl.gg/assets/modl-image-10.png"],
+    hasImage: true,
+    gridClass: "",
+  },
+  {
+    title: "AI Moderation",
+    description: "Context-aware AI on reported messages. Auto-punish or staff-approve.",
+    expandedDescription: "To not pester players and use excessive tokens, AI chat moderation only scans messages that are chat-reported. Constantly evolving system prompts to improve accuracy — the AI is context-aware of Minecraft (e.g: \"i'm going to kill you with a fireball\" is a game term, not an IRL death threat). Configure AI to look for specific things and execute punishments automatically or make suggestions for staff approval.",
+    media: "https://cdn.modl.gg/assets/modl-image-11.png",
+    hasImage: true,
+    gridClass: "",
+  },
+  {
+    title: "Audit & Analytics",
+    description: "Rollback actions, track trends, manage evidence from one dashboard.",
+    expandedDescription: "Audit and rollback any staff punishment actions. See statistics on average ticket response times and staff activity (ticket responses, punishments issued, etc). See trends for different types of punishments and ticket data. Manage all files uploaded (evidence, ticket attachments): easily view, search, filter, delete, and download all files from a centralized dashboard.",
+    media: "https://i.imgur.com/gj49NbH.gif",
+    extraMedia: ["https://cdn.modl.gg/assets/modl-image-6.png"],
+    hasImage: true,
+    gridClass: "lg:col-span-2",
+  },
+  {
     title: "Support Tickets",
-    description: "Integrated ticketing system for reports, appeals, bugs, applications, and support",
-    expandedContent: "Customize forms, quick-responses, notify players in-game and via email of ticket updates, and monitor how response times. For example, appeals automatically gather punishment information and you can pardon/reduce bans with 1 click.",
+    description: "Custom forms, quick-responses, in-game and email notifications.",
+    expandedDescription: "Fully customizable knowledgebase homepage with logo, external link, and sections. Searchable markdown article support — write your rules, guidelines, and support articles with ease. Create fully custom forms for bug reports, support tickets, and staff applications with conditional sections. Customizable quick-response buttons to significantly streamline efficiency. Send in-game and email notifications for when staff respond to a player's ticket. Staff members are automatically subscribed to tickets they respond in.",
+    media: "https://cdn.modl.gg/assets/modl-image-7.png",
+    hasImage: true,
+    gridClass: "",
   },
   {
-    icon: Bot,
-    title: "AI Auto-Moderation",
-    description: "AI systems that detect and respond to chat reports in real-time.",
-    expandedContent: "Our highly customizable AI helper is able to analyze chat responses against a custom set of rules and issue real-time or manually-verified punishments with ease. It integrates directly into the tickets feature and requires no additional setup (besides purchasing Premium).",
-    hero: true,
+    title: "Web Dashboard",
+    description: "Manage your server from anywhere with a powerful web interface.",
+    expandedDescription: "A web interface that allows you to manage your server more efficiently than ever before alongside comprehensive in-game tools. Invite your staff team and fully customize their roles and permissions (permission nodes for each punishment type). Set each staff member's Minecraft account so that permissions and punishments are synced between panel and in-game. Make modl yours: upload a custom logo, favicon, homepage image, and set your custom domain.",
+    media: "https://cdn.modl.gg/assets/modl-image-3.png",
+    extraMedia: ["https://cdn.modl.gg/assets/modl-image-2.png"],
+    hasImage: true,
+    gridClass: "",
   },
   {
-    icon: Globe,
-    title: "Web Integration",
-    description: "Stay in control of your server anywhere you go with the web.",
-    expandedContent: "A web interface that allows you to manage your server more efficiently than ever before alongside comprehensive in-game tools.",
+    title: "Player Profiles",
+    description: "Full player info, session history, notes, and alt accounts at a glance.",
+    expandedDescription: "See player info (playtime, session details, country), notes, history, alts, and reports in sleek in-game and web UIs with windows for many open players on web. Full evidence system for uploading files and linking to other sites (YouTube, Imgur, etc). 8-char alphanumeric ID system for streamlined appeal system — staff see all punishment details and can pardon/change duration without leaving the page.",
+    media: "https://cdn.modl.gg/assets/modl-image-9.png",
+    hasImage: true,
+    gridClass: "",
   },
   {
-    icon: LayoutDashboard,
-    title: "Analytics Dashboard",
-    description: "Comprehensive reports and insights on trends and moderator activity.",
-    expandedContent: "Our analytics dashboard gives you deep insights into moderation trends, support trends, and staff activity. Take actions such as rolling back staff punishments, adjusting punishment lengths, and more to combat bad actors.",
-    hero: true,
-  }
+    title: "Fully Open-Source",
+    description: "Transparent codebase under AGPL-3.0. Inspect, contribute, and trust the code.",
+    expandedDescription: "modl.gg's Minecraft plugin is fully open-source under the AGPL-3.0 license. You can inspect every line of code that runs on your server, contribute improvements, and verify security yourself. We believe in transparency — your server's moderation tools should be auditable and trustworthy. Community contributions are welcome via GitHub.",
+    media: "",
+    hasImage: false,
+    gridClass: "",
+  },
+  {
+    title: "Web-Viewable Replays",
+    description: "Review reported incidents with browser-based replay playback.",
+    expandedDescription: "When integrated with compatible recording plugins, modl.gg lets staff review reported incidents through web-viewable replays directly in the browser. No need to download replay files or open Minecraft — watch what happened from the comfort of your web panel. Perfect for reviewing combat reports, griefing incidents, and other disputes that require visual context.",
+    media: "",
+    hasImage: false,
+    gridClass: "",
+  },
+  {
+    title: "In-Game Control Menu",
+    description: "Full moderation GUI accessible without leaving the game.",
+    expandedDescription: "Access the full moderation suite directly in-game through intuitive GUI menus. View player profiles, issue punishments, manage tickets, and review reports without ever needing to tab out to a browser. Designed for staff members who are actively moderating and need quick access to tools while playing. All actions sync instantly with the web panel.",
+    media: "",
+    hasImage: false,
+    gridClass: "",
+  },
+  {
+    title: "Network-Wide Staff Suite",
+    description: "Unified moderation across your entire server network.",
+    expandedDescription: "modl.gg works across your entire network — whether you're running BungeeCord, Velocity, or standalone servers. Punishments, tickets, reports, and staff permissions are all synchronized. Staff can moderate from any server in your network, and players can't escape punishments by switching servers. Supports Spigot, Paper, Folia, Velocity, and BungeeCord (including forks).",
+    media: "",
+    hasImage: false,
+    gridClass: "",
+  },
+  {
+    title: "Fully Configurable",
+    description: "Every message, rule, and behavior is customizable to your needs.",
+    expandedDescription: "Everything is fully customizable, from Minecraft plugin locale to ticket forms and punishment types. Smart, thought-out defaults mean you can get started instantly, but every detail can be tweaked. Customize punishment types and point values, ticket form fields with conditional logic, quick-response templates, notification preferences, role permissions with granular permission nodes, and the look and feel of your public-facing pages.",
+    media: "",
+    hasImage: false,
+    gridClass: "lg:col-span-2",
+  },
 ];
 
-const integrationItems = [
-  "Drag & drop plugin for any platform",
-  "Import from LiteBans and other plugins*",
-  "Fully configurable messages and settings",
-  "Low latency web-to-game sync",
+const entrances = [
+  { x: -30, y: 25 }, { x: 0, y: -25 }, { x: 30, y: 20 },
+  { x: -25, y: 30 }, { x: 0, y: 30 }, { x: 25, y: -20 },
+  { x: -30, y: 20 }, { x: 30, y: 25 }, { x: -20, y: 30 },
+  { x: 20, y: -25 }, { x: -25, y: 25 }, { x: 30, y: 30 },
+  { x: 0, y: 35 },
 ];
 
 const ease = [0.22, 1, 0.36, 1];
 
-const cardReveal = {
-  hidden: { opacity: 0, y: 40 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, delay: i * 0.08, ease },
-  }),
-};
-
-function getIconAnimationProps(Icon: LucideIcon) {
-  switch (Icon) {
-    case ShieldCheck:
-      return { className: "h-5 w-5 text-primary animate-pulse" };
-    case Link:
-      return { className: "h-5 w-5 text-primary group-hover:animate-bounce" };
-    case Headphones:
-      return { className: "h-5 w-5 text-primary group-hover:animate-bounce" };
-    case Bot:
-      return { className: "h-5 w-5 text-primary animate-spin", style: { animationDuration: "8s" } };
-    case Globe:
-      return { className: "h-5 w-5 text-primary animate-spin", style: { animationDuration: "12s" } };
-    case LayoutDashboard:
-      return { className: "h-5 w-5 text-primary animate-pulse" };
-    default:
-      return { className: "h-5 w-5 text-primary" };
+// Figure out which row each card ends up in (4-col grid)
+function getRowBreaks(): number[] {
+  const rows: number[] = [];
+  let col = 0;
+  for (let i = 0; i < features.length; i++) {
+    const span = features[i].gridClass.includes("col-span-2") ? 2 : 1;
+    if (col + span > 4) { col = 0; }
+    rows.push(col === 0 ? i : rows[rows.length - 1]);
+    col += span;
+    if (col >= 4) col = 0;
   }
+  // Return the index of the LAST card in each row
+  const lastInRow: number[] = [];
+  let c = 0;
+  for (let i = 0; i < features.length; i++) {
+    const span = features[i].gridClass.includes("col-span-2") ? 2 : 1;
+    c += span;
+    if (c >= 4 || i === features.length - 1) {
+      lastInRow.push(i);
+      c = 0;
+    }
+  }
+  return lastInRow;
+}
+
+const rowEnds = getRowBreaks();
+
+function getRowEndForCard(cardIndex: number): number {
+  for (const end of rowEnds) {
+    if (cardIndex <= end) return end;
+  }
+  return features.length - 1;
+}
+
+function CollapsedCard({ feature, index, isSelected, onClick }: {
+  feature: Feature;
+  index: number;
+  isSelected: boolean;
+  onClick: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const imgY = useTransform(scrollYProgress, [0, 1], [10, -10]);
+  const entrance = entrances[index];
+
+  return (
+    <motion.div
+      ref={ref}
+      className={`group relative overflow-hidden rounded-2xl border bg-card cursor-pointer min-h-[220px] ${
+        isSelected ? "border-primary/40 ring-1 ring-primary/20" : "border-white/[0.06]"
+      } ${feature.gridClass}`}
+      initial={{ opacity: 0, ...entrance, scale: 0.92 }}
+      whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.7, delay: index * 0.06, ease }}
+      whileHover={{ scale: 1.015 }}
+      onClick={onClick}
+    >
+      {feature.hasImage ? (
+        <motion.div className="absolute inset-0" style={{ y: imgY }}>
+          <img src={feature.media} alt={feature.title} className="w-full h-[110%] object-cover object-top screenshot-sharp" loading="lazy" />
+        </motion.div>
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.08] to-transparent" />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:from-black/90 transition-opacity" />
+      <div className="relative h-full flex flex-col justify-end p-5">
+        <h3 className="font-display text-base font-bold mb-1 tracking-tight text-white">{feature.title}</h3>
+        <p className="text-xs text-white/60 leading-relaxed line-clamp-2">{feature.description}</p>
+      </div>
+    </motion.div>
+  );
+}
+
+function ExpandedPanel({ feature, onClose }: { feature: Feature; onClose: () => void }) {
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    panelRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, []);
+
+  const allMedia = [
+    ...(feature.hasImage ? [feature.media] : []),
+    ...(feature.extraMedia ?? []),
+  ];
+
+  return (
+    <motion.div
+      ref={panelRef}
+      className="col-span-full rounded-2xl border border-primary/20 bg-card overflow-hidden"
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: "auto" }}
+      exit={{ opacity: 0, height: 0 }}
+      transition={{ duration: 0.35, ease }}
+    >
+      <div className="relative p-5 lg:p-6">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-20 p-1.5 rounded-lg bg-white/[0.08] hover:bg-white/[0.15] transition-colors"
+        >
+          <X className="w-4 h-4 text-white/70" />
+        </button>
+
+        {/* Content fades in separately for smooth switching */}
+        <motion.div
+          key={feature.title}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
+          {!feature.hasImage && (
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] to-transparent pointer-events-none rounded-2xl" />
+          )}
+
+          <div className="relative">
+            <h2 className="font-display text-xl font-bold tracking-tight mb-2">{feature.title}</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-5 max-w-3xl">{feature.expandedDescription}</p>
+          </div>
+
+          {allMedia.length > 0 && (
+            <div className={`grid gap-3 ${allMedia.length === 1 ? "grid-cols-1 max-w-2xl" : "grid-cols-1 sm:grid-cols-2"}`}>
+              {allMedia.map((src, i) => (
+                <div key={i} className="rounded-xl overflow-hidden border border-white/[0.06]">
+                  <img src={src} alt="" className="w-full h-auto screenshot-sharp" />
+                </div>
+              ))}
+            </div>
+          )}
+        </motion.div>
+      </div>
+    </motion.div>
+  );
 }
 
 export default function FeaturesSection() {
-  const [expandedFeature, setExpandedFeature] = useState<number | null>(null);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
-  const toggleFeature = (index: number) => {
-    setExpandedFeature(expandedFeature === index ? null : index);
+  const handleClick = (i: number) => {
+    setExpandedIndex(expandedIndex === i ? null : i);
   };
 
+  const expandedRowEnd = expandedIndex !== null ? getRowEndForCard(expandedIndex) : -1;
+
+  // Build grid items: cards + expanded panel slot after each row
+  const gridItems: React.ReactNode[] = [];
+  // Collect row-end indices
+  const allRowEnds = new Set(rowEnds);
+
+  for (let i = 0; i < features.length; i++) {
+    gridItems.push(
+      <CollapsedCard
+        key={features[i].title}
+        feature={features[i]}
+        index={i}
+        isSelected={expandedIndex === i}
+        onClick={() => handleClick(i)}
+      />
+    );
+
+    // After each row end, place an AnimatePresence slot for the panel
+    if (allRowEnds.has(i)) {
+      const isThisRow = i === expandedRowEnd && expandedIndex !== null;
+      gridItems.push(
+        <AnimatePresence key={`panel-slot-${i}`} mode="wait">
+          {isThisRow && (
+            <ExpandedPanel
+              key={`panel-${expandedIndex}`}
+              feature={features[expandedIndex]}
+              onClose={() => setExpandedIndex(null)}
+            />
+          )}
+        </AnimatePresence>
+      );
+    }
+  }
+
   return (
-    <section id="features" className="py-28 px-6 md:px-10">
-      <div className="max-w-7xl mx-auto">
+    <section id="features" className="pt-6 sm:pt-8 pb-12 px-4 sm:px-6 md:px-10">
+      <div className="max-w-5xl mx-auto flex flex-col gap-3">
+
+        {/* Hero glass bar */}
         <motion.div
-          className="mb-16"
-          initial={{ clipPath: "inset(0 100% 0 0)" }}
-          whileInView={{ clipPath: "inset(0 0% 0 0)" }}
-          viewport={{ once: true, margin: "-80px" }}
+          className="glass-bar rounded-2xl px-6 py-4 sm:px-8 sm:py-5 flex items-center gap-6"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease }}
         >
-          <p className="text-primary text-sm font-semibold tracking-widest uppercase mb-3">Features</p>
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 tracking-tight">
-            Powerful Moderation Tools
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl">
-            Everything you need to keep your Minecraft community safe, engaged, and supported
+          <h1 className="font-brand text-2xl sm:text-3xl tracking-tight shrink-0">
+            <span className="text-primary">modl</span>
+            <span className="text-foreground/70">.gg</span>
+          </h1>
+          <span className="w-px h-6 bg-white/10 shrink-0 hidden sm:block" />
+          <p className="text-sm text-muted-foreground/70 leading-relaxed">
+            The all-in-one moderation and support suite for Minecraft servers — smart punishments, AI moderation, ticketing, analytics, and a full web dashboard.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 auto-rows-auto">
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
-            const isExpanded = expandedFeature === index;
-            const iconProps = getIconAnimationProps(Icon);
-            return (
-              <motion.div
-                key={index}
-                className={`gradient-border-wrap group ${feature.hero ? "lg:col-span-2" : ""}`}
-                custom={index}
-                variants={cardReveal}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-60px" }}
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="bg-card p-7 rounded-[inherit] h-full">
-                  <div className="flex justify-between items-start mb-5">
-                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                      <Icon {...iconProps} />
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                      onClick={() => toggleFeature(index)}
-                    >
-                      {isExpanded ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                  <h3 className="font-display text-lg font-bold mb-2">{feature.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
-
-                  <AnimatePresence>
-                    {isExpanded && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.35, ease }}
-                        className="overflow-hidden"
-                      >
-                        <div className="pt-4 mt-4 border-t border-white/[0.06]">
-                          <p className="text-muted-foreground/70 text-sm leading-relaxed">
-                            {feature.expandedContent}
-                          </p>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </motion.div>
-            );
-          })}
+        {/* Feature cards grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-auto gap-3">
+          {gridItems}
         </div>
-
-        <motion.div
-          className="mt-8"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <div className="gradient-border-wrap">
-            <div
-              className="bg-card p-8 rounded-[inherit]"
-              style={{
-                backgroundImage:
-                  "linear-gradient(hsl(var(--primary)/0.03) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)/0.03) 1px, transparent 1px)",
-                backgroundSize: "40px 40px",
-              }}
-            >
-              <h3 className="font-display text-xl font-bold mb-6">Easy Integration with Your Server</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {integrationItems.map((text, i) => (
-                  <motion.div
-                    key={i}
-                    className="flex items-center"
-                    initial={{ opacity: 0, x: -15 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 0.1 + i * 0.06 }}
-                  >
-                    <Check className="text-emerald-400 mt-0.5 mr-3 shrink-0 w-5 h-5" />
-                    <span className="text-muted-foreground text-sm">{text}</span>
-                  </motion.div>
-                ))}
-              </div>
-              <p className="text-xs text-muted-foreground/30 mt-5">
-                * Importing from other moderation plugins is available upon request
-              </p>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

@@ -1,17 +1,13 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import Navbar from "@/components/home/Navbar";
-import HeroSection from "@/components/home/HeroSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
-import ShowcaseSection from "@/components/home/ShowcaseSection";
 import PricingSection from "@/components/home/PricingSection";
 import FAQSection from "@/components/home/FAQSection";
-import CTASection from "@/components/home/CTASection";
 import Footer from "@/components/home/Footer";
 
 function SectionDivider() {
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-10">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-10">
       <motion.div
         className="section-divider"
         initial={{ scaleX: 0 }}
@@ -30,26 +26,13 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-background text-foreground font-sans min-h-screen grain-bg">
-      <Navbar />
-      <main className="relative overflow-hidden z-[1]">
-        <div className="absolute inset-0 dot-pattern opacity-30 pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[900px] pointer-events-none overflow-hidden -z-10">
-          <div className="absolute top-[-5%] left-[20%] w-[650px] h-[650px] bg-primary/[0.04] rounded-full blur-[180px]" />
-          <div className="absolute top-[10%] right-[15%] w-[500px] h-[500px] bg-accent/[0.03] rounded-full blur-[150px]" />
-        </div>
-
-        <HeroSection />
-        <SectionDivider />
+    <div className="bg-background text-foreground font-sans min-h-screen">
+      <main className="relative overflow-hidden">
         <FeaturesSection />
-        <SectionDivider />
-        <ShowcaseSection />
         <SectionDivider />
         <PricingSection />
         <SectionDivider />
         <FAQSection />
-        <SectionDivider />
-        <CTASection />
         <Footer />
       </main>
     </div>

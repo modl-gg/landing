@@ -16,9 +16,7 @@ export default function Footer() {
       <div
         className="h-px w-full mb-16"
         style={{
-          background: "linear-gradient(90deg, transparent, hsl(var(--primary)/0.3), hsl(var(--accent)/0.2), transparent)",
-          backgroundSize: "200% 100%",
-          animation: "border-flow 4s linear infinite",
+          background: "linear-gradient(90deg, transparent, hsl(var(--primary)/0.15), transparent)",
         }}
       />
 
