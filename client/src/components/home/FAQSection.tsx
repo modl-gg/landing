@@ -11,13 +11,12 @@ const FAQData = [
   { question: "How easy is it to install?", answer: "Register your server, install the plugin on your proxy or server, plug in the API key, and you're good to go!" },
   { question: "Can I customize moderation rules?", answer: "Everything is fully customizable — from locale messages to punishment types — with smart defaults out of the box." },
   { question: "Can I migrate from LiteBans?", answer: "Yes! We offer migration tools to import all punishments and player data from LiteBans." },
-  { question: "Is modl.gg free?", answer: "Completely free. Premium is optional for larger servers that need extra features like AI moderation." },
   { question: "What server types are supported?", answer: "Spigot, Paper, Folia, Velocity, and BungeeCord (including forks). Forge/Fabric support is in progress." },
   { question: "Where can I report issues?", answer: "Email us or join our Discord at modl.gg/discord." },
 ];
 
-const leftColumn = FAQData.slice(0, 4);
-const rightColumn = FAQData.slice(4);
+const leftColumn = FAQData.slice(0, 3);
+const rightColumn = FAQData.slice(3);
 
 function FAQColumn({ items, offset }: { items: typeof FAQData; offset: number }) {
   return (
@@ -34,12 +33,12 @@ function FAQColumn({ items, offset }: { items: typeof FAQData; offset: number })
             viewport={{ once: true }}
             transition={{ duration: 0.3, delay: 0.05 + index * 0.04 }}
           >
-            <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-white/[0.02] transition-colors">
+            <AccordionTrigger className="px-4 py-2.5 hover:no-underline hover:bg-white/[0.02] transition-colors">
               <span className="mr-2 flex-1 text-xs font-semibold text-left font-display leading-snug">
                 {faq.question}
               </span>
             </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4 pt-0">
+            <AccordionContent className="px-4 pb-3 pt-0">
               <p className="text-muted-foreground leading-relaxed text-xs">{faq.answer}</p>
             </AccordionContent>
           </motion.div>
@@ -71,7 +70,7 @@ export default function FAQSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
           <FAQColumn items={leftColumn} offset={0} />
-          <FAQColumn items={rightColumn} offset={4} />
+          <FAQColumn items={rightColumn} offset={3} />
         </div>
       </div>
     </section>
