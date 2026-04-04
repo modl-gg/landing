@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { X, ChevronDown } from "lucide-react";
 
 interface Feature {
   title: string;
@@ -134,34 +134,57 @@ const entrances = [
 
 const ease = [0.22, 1, 0.36, 1];
 
-// Figure out which row each card ends up in (4-col grid)
-function getRowBreaks(): number[] {
-  const rows: number[] = [];
-  let col = 0;
-  for (let i = 0; i < features.length; i++) {
-    const span = features[i].gridClass.includes("col-span-2") ? 2 : 1;
-    if (col + span > 4) { col = 0; }
-    rows.push(col === 0 ? i : rows[rows.length - 1]);
-    col += span;
-    if (col >= 4) col = 0;
-  }
-  // Return the index of the LAST card in each row
+function getColCount(): number {
+  if (typeof window === "undefined") return 4;
+  if (window.innerWidth >= 1024) return 4; // lg
+  if (window.innerWidth >= 640) return 2;  // sm
+  return 1;
+}
+
+function getCardSpan(gridClass: string, colCount: number): number {
+  // lg:col-span-2 only applies at lg (4 cols), sm:col-span-2 at sm+ (2+ cols)
+  if (colCount >= 4 && gridClass.includes("col-span-2")) return 2;
+  if (colCount >= 2 && gridClass.includes("sm:col-span-2")) return 2;
+  return 1;
+}
+
+function computeRowEnds(colCount: number): number[] {
   const lastInRow: number[] = [];
   let c = 0;
   for (let i = 0; i < features.length; i++) {
-    const span = features[i].gridClass.includes("col-span-2") ? 2 : 1;
+    const span = getCardSpan(features[i].gridClass, colCount);
+    if (c + span > colCount) {
+      // card doesn't fit, previous card was end of row
+      if (i > 0 && (lastInRow.length === 0 || lastInRow[lastInRow.length - 1] !== i - 1)) {
+        lastInRow.push(i - 1);
+      }
+      c = 0;
+    }
     c += span;
-    if (c >= 4 || i === features.length - 1) {
+    if (c >= colCount) {
       lastInRow.push(i);
       c = 0;
     }
   }
+  if (lastInRow.length === 0 || lastInRow[lastInRow.length - 1] !== features.length - 1) {
+    lastInRow.push(features.length - 1);
+  }
   return lastInRow;
 }
 
-const rowEnds = getRowBreaks();
+function useRowEnds() {
+  const [rowEnds, setRowEnds] = useState(() => computeRowEnds(getColCount()));
 
-function getRowEndForCard(cardIndex: number): number {
+  useEffect(() => {
+    const update = () => setRowEnds(computeRowEnds(getColCount()));
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return rowEnds;
+}
+
+function getRowEndForCard(rowEnds: number[], cardIndex: number): number {
   for (const end of rowEnds) {
     if (cardIndex <= end) return end;
   }
@@ -204,8 +227,13 @@ function CollapsedCard({ feature, index, isSelected, onClick }: {
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:from-black/90 transition-opacity" />
       <div className="relative h-full flex flex-col justify-end p-5">
-        <h3 className="font-display text-base font-bold mb-1 tracking-tight text-white">{feature.title}</h3>
-        <p className="text-xs text-white/60 leading-relaxed line-clamp-2">{feature.description}</p>
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <h3 className="font-display text-base font-bold mb-1 tracking-tight text-white">{feature.title}</h3>
+            <p className="text-xs text-white/60 leading-relaxed line-clamp-2">{feature.description}</p>
+          </div>
+          <ChevronDown className={`w-4 h-4 shrink-0 text-white/30 group-hover:text-white/60 transition-all duration-300 ${isSelected ? "rotate-180 text-primary/60" : ""}`} />
+        </div>
       </div>
     </motion.div>
   );
@@ -271,18 +299,29 @@ function ExpandedPanel({ feature, onClose }: { feature: Feature; onClose: () => 
   );
 }
 
+// Preload all expanded-view images so they appear instantly on click
+function usePreloadImages() {
+  useEffect(() => {
+    for (const f of features) {
+      if (f.media) { const img = new Image(); img.src = f.media; }
+      for (const src of f.extraMedia ?? []) { const img = new Image(); img.src = src; }
+    }
+  }, []);
+}
+
 export default function FeaturesSection() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const rowEnds = useRowEnds();
+  usePreloadImages();
 
   const handleClick = (i: number) => {
     setExpandedIndex(expandedIndex === i ? null : i);
   };
 
-  const expandedRowEnd = expandedIndex !== null ? getRowEndForCard(expandedIndex) : -1;
+  const expandedRowEnd = expandedIndex !== null ? getRowEndForCard(rowEnds, expandedIndex) : -1;
 
   // Build grid items: cards + expanded panel slot after each row
   const gridItems: React.ReactNode[] = [];
-  // Collect row-end indices
   const allRowEnds = new Set(rowEnds);
 
   for (let i = 0; i < features.length; i++) {
