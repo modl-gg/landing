@@ -79,7 +79,7 @@ export default function PricingSection() {
             </div>
             <button
               onClick={() => navigate("/register")}
-              className="mt-auto block w-full text-center bg-white/[0.06] hover:bg-white/[0.1] text-white text-xs font-bold rounded-lg py-2.5 transition-colors"
+              className="mt-auto block w-full text-center py-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-white/20 text-xs font-medium text-foreground/70 transition-colors"
             >
               Register Free
             </button>

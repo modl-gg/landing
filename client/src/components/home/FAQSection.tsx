@@ -51,7 +51,7 @@ function FAQColumn({ items, offset }: { items: typeof FAQData; offset: number })
 
 export default function FAQSection() {
   return (
-    <section id="faq" className="py-12 px-4 sm:px-6 md:px-10">
+    <section id="faq" className="pt-12 pb-6 px-4 sm:px-6 md:px-10">
       <div className="max-w-5xl mx-auto">
         <motion.div
           className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4 mb-6"
