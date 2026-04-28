@@ -1,5 +1,6 @@
 import { Github } from "lucide-react";
 import { FaDiscord } from "react-icons/fa";
+import { SiModrinth, SiSpigotmc } from "react-icons/si";
 
 const linkClasses = "text-sm text-muted-foreground/40 hover:text-foreground/70 transition-colors";
 
@@ -24,11 +25,17 @@ export default function Footer() {
           </div>
 
           <div className="flex items-center gap-4">
-            <a href="https://modl.gg/discord" target="_blank" rel="noopener noreferrer" className="text-muted-foreground/30 hover:text-primary transition-colors">
+            <a href="https://modl.gg/discord" target="_blank" rel="noopener noreferrer" aria-label="Join modl on Discord" className="text-muted-foreground/30 hover:text-primary transition-colors">
               <FaDiscord className="w-5 h-5" />
             </a>
-            <a href="https://github.com/modl-gg" target="_blank" rel="noopener noreferrer" className="text-muted-foreground/30 hover:text-primary transition-colors">
+            <a href="https://github.com/modl-gg" target="_blank" rel="noopener noreferrer" aria-label="View modl on GitHub" className="text-muted-foreground/30 hover:text-primary transition-colors">
               <Github className="w-5 h-5" />
+            </a>
+            <a href="https://www.spigotmc.org/resources/modl-support-moderation-reimagined.127780/" target="_blank" rel="noopener noreferrer" aria-label="View modl on SpigotMC" className="text-muted-foreground/30 hover:text-primary transition-colors">
+              <SiSpigotmc className="w-5 h-5" />
+            </a>
+            <a href="https://modrinth.com/plugin/modl" target="_blank" rel="noopener noreferrer" aria-label="View modl on Modrinth" className="text-muted-foreground/30 hover:text-primary transition-colors">
+              <SiModrinth className="w-5 h-5" />
             </a>
           </div>
         </div>

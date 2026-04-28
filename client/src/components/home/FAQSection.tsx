@@ -38,7 +38,7 @@ function FAQColumn({ items, offset }: { items: typeof FAQData; offset: number })
                 {faq.question}
               </span>
             </AccordionTrigger>
-            <AccordionContent className="px-4 pb-3 pt-0">
+            <AccordionContent className="px-4 pb-3 pt-1">
               <p className="text-muted-foreground leading-relaxed text-xs">{faq.answer}</p>
             </AccordionContent>
           </motion.div>
