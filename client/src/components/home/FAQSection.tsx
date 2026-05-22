@@ -7,100 +7,71 @@ import {
 } from "@modl-gg/shared-web/components/ui/accordion";
 
 const FAQData = [
-  {
-    question: "Why would I bother switching to modl.gg from my current setup?",
-    answer: "Switching to modl.gg would provide you with tools more powerful than any other publicly available setup for Minecraft. Our point-based dynamic punishment system fairly calculates punishment durations without any extra work on staff members. Our web panel makes things easy to find and allows staff members to easily cross-reference data between multiple players. We also provide AI-powered tools to automate majority of your reports and tickets, allowing your staff to focus on more important things. Furthermore, moving is easy: we provide a migration tool to effortlessly transfer your existing data. Most importantly, modl.gg is free and will stay free."
-  },
-  {
-    question: "How easy is it to install?",
-    answer: "Register your server, install the plugin on your proxy or server, plug in the API key, and you're good to go!"
-  },
-  {
-    question: "Can I customize the moderation rules for my game?",
-    answer: "Absolutely! Everything is fully customizable. With smart & thought-out defaults, we let you tweak everything from locale messages to punishment types."
-  },
-  {
-    question: "Can I migrate from LiteBans?",
-    answer: "Yes! We offer migration tools to import all of your current punishments and player data from LiteBans."
-  },
-  {
-    question: "Is modl.gg free to use?",
-    answer: "Yes! Our platform is completely free to use, and it will stay this way. We provide a premium plan for extra features (targeted towards larger servers), but purchasing it is completely optional."
-  },
-  {
-    question: "What Minecraft server types does modl.gg support?",
-    answer: "We support Spigot, Paper, Folia, Velocity, and BungeeCord (forks too). Forge/Fabric support is being worked on right now."
-  },
-  {
-    question: "Where can I report issues and/or give feedback?",
-    answer: "You can email us or join our Discord at: modl.gg/discord"
-  }
+  { question: "Why switch to modl.gg?", answer: "modl.gg is more powerful than any publicly available Minecraft moderation setup. Smart punishments, AI automation, replays, beautiful in-game GUIs, a web panel, easy migration from existing setups, and much more. Free forever." },
+  { question: "How easy is it to install?", answer: <>The installation process is incredibly simple, taking 1-10 minutes depending on your setup. Read more at <a href="https://docs.modl.gg/installation" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">docs.modl.gg/installation</a></> },
+  { question: "Can I customize moderation rules?", answer: "Everything is fully customizable, from locale messages to punishment types; all with smart defaults out of the box." },
+  { question: "Can I migrate from LiteBans?", answer: "Yes! We offer migration tools to import all punishments and player data from LiteBans." },
+  { question: "What server types are supported?", answer: "Spigot, Paper, Folia, Velocity, and BungeeCord (including forks). Forge/Fabric support is in progress." },
+  { question: "Where can I report issues?", answer: <>Email us or join our <a href="https://modl.gg/discord" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Discord</a></> },
 ];
+
+const leftColumn = FAQData.slice(0, 3);
+const rightColumn = FAQData.slice(3);
+
+function FAQColumn({ items, offset }: { items: typeof FAQData; offset: number }) {
+  return (
+    <Accordion type="single" collapsible className="space-y-2">
+      {items.map((faq, index) => (
+        <AccordionItem
+          key={offset + index}
+          value={`item-${offset + index}`}
+          className="border-b-0 card-surface overflow-hidden data-[state=open]:bg-[hsl(var(--surface-2))] transition-all"
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.3, delay: 0.05 + index * 0.04 }}
+          >
+            <AccordionTrigger className="px-4 py-2.5 hover:no-underline hover:bg-white/[0.02] transition-colors">
+              <span className="mr-2 flex-1 text-xs font-semibold text-left font-display leading-snug">
+                {faq.question}
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-3 pt-1">
+              <p className="text-muted-foreground leading-relaxed text-xs">{faq.answer}</p>
+            </AccordionContent>
+          </motion.div>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  );
+}
 
 export default function FAQSection() {
   return (
-    <section id="faq" className="pt-20 pb-8 px-6">
-      <div className="max-w-4xl mx-auto">
+    <section id="faq" className="pt-12 pb-6 px-4 sm:px-6 md:px-10">
+      <div className="max-w-5xl mx-auto">
         <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
+          className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4 mb-6"
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          <Accordion type="single" collapsible className="space-y-4">
-            {FAQData.map((faq, index) => (
-              <AccordionItem key={index} value={`item-${index}`} className="border-b-0">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: 0.1 + (index * 0.05) }}
-                >
-                  <div className="glass rounded-2xl overflow-hidden">
-                    <AccordionTrigger className="px-6 py-6 hover:no-underline hover:bg-white/5 transition-colors">
-                      <span className="flex-1 text-lg font-semibold text-left">{faq.question}</span>
-                    </AccordionTrigger>
-                    <AccordionContent className="px-6 pb-3 pt-2">
-                      <p className="text-slate-400 leading-relaxed text-sm">
-                        {faq.answer}
-                      </p>
-                    </AccordionContent>
-                  </div>
-                </motion.div>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </motion.div>
-
-        <motion.div
-          className="text-center mt-8"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <p className="text-slate-400">
+          <h2 className="font-display text-2xl font-bold tracking-tight">FAQ</h2>
+          <p className="text-sm text-muted-foreground">
             Still have questions?{" "}
-            <a
-              href="https://modl.gg/discord"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              Join our Discord community
+            <a href="https://modl.gg/discord" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+              Join our Discord
             </a>
           </p>
         </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
+          <FAQColumn items={leftColumn} offset={0} />
+          <FAQColumn items={rightColumn} offset={3} />
+        </div>
       </div>
     </section>
   );

@@ -1,143 +1,141 @@
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
+import { useLocation } from "wouter";
+import { type ReactNode } from "react";
 
-const freePlanFeatures = [
-  { text: "Up to <b>5</b> staff members" },
-  { text: "<b>Full-feature</b> moderation & support suite" },
-  { text: "1GB <b>CDN</b> Storage" },
-  { text: "No ads, <b>no gimmicks</b>" },
-  { text: "<b>Community</b> & developer support" }
+const freePlanFeatures: ReactNode[] = [
+  <>Up to <b>5</b> staff members</>,
+  <><b>Full-feature</b> moderation & support suite</>,
+  <>1GB <b>CDN</b> Storage</>,
+  <>Free <b>server.modl.gg</b> domain name</>,
+  <>No ads, <b>no gimmicks</b></>,
+  <><b>Community</b> & developer support</>,
 ];
 
-const premiumPlanFeatures = [
-  { text: "<b>Unlimited</b> staff members" },
-  { text: "<b>Full-feature</b> moderation & support suite" },
-  { text: "200GB <b>CDN</b> Storage ($0.08/GB/month past 200GB)" },
-  { text: "Beta <b>AI</b> chat moderation & tickets access" },
-  { text: "<b>Priority</b> developer support" }
+const premiumPlanFeatures: ReactNode[] = [
+  <><b>Unlimited</b> staff members</>,
+  <><b>Full-feature</b> moderation & support suite</>,
+  <>200GB <b>CDN</b> Storage ($0.08/GB/month past 200GB)</>,
+  <>Use a <b>custom domain</b> name</>,
+  <>Beta <b>AI</b> chat moderation & cheat-analysis access</>,
+  <><b>Priority</b> developer support</>,
 ];
 
-const enterprisePlanFeatures = [
-  { text: "<b>Dedicated</b> machine in preferable region (isolated data)" },
-  { text: "Emails sent from <b>your domain</b>" },
-  { text: "We sign an <b>NDA</b> contract" },
-  { text: "<b>Negotiable</b> rates on storage/AI overage" },
-  { text: "<b>99% SLA</b> contract (+ longer term agreements)" },
-  { text: "Custom features, <b>tailored theme</b> and UI" }
+const enterprisePlanFeatures: ReactNode[] = [
+  <><b>Dedicated</b> machine in preferable region (isolated data)</>,
+  <>Emails sent from <b>your domain</b></>,
+  <>We sign an <b>NDA</b> contract</>,
+  <><b>Negotiable</b> rates on storage/AI overage</>,
+  <><b>99% SLA</b> contract (+ longer term agreements)</>,
+  <>Custom features, <b>tailored theme</b> and UI</>,
 ];
+
+function FeatureItem({ children, checkColor }: { children: ReactNode; checkColor: string }) {
+  return (
+    <div className="flex items-start gap-2 text-xs text-muted-foreground">
+      <Check className={`${checkColor} w-3.5 h-3.5 shrink-0 mt-0.5`} />
+      <span>{children}</span>
+    </div>
+  );
+}
 
 export default function PricingSection() {
+  const [, navigate] = useLocation();
+
   return (
-    <section id="pricing" className="py-20 px-6">
+    <section id="pricing" className="py-12 px-4 sm:px-6 md:px-10">
       <div className="max-w-5xl mx-auto">
         <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
+          className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4 mb-6"
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-4xl font-bold mb-4 tracking-tight">Simple, Transparent Pricing</h2>
-          <p className="text-slate-400">Free forever for hobbyists, fair forever when you get serious.</p>
+          <h2 className="font-display text-2xl font-bold tracking-tight">Pricing</h2>
+          <p className="text-sm text-muted-foreground">Free forever. Fair forever when you scale.</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-          {/* Free Plan */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {/* Free */}
           <motion.div
-            className="glass rounded-[2rem] p-8 flex flex-col"
+            className="card-surface p-5 flex flex-col"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5 }}
           >
-            <div className="mb-8">
-              <h3 className="text-xl font-bold mb-2">Free Plan</h3>
-              <p className="text-slate-400 text-sm">Free forever for growing communities.</p>
-              <div className="mt-6 flex items-baseline gap-1">
-                <span className="text-5xl font-bold tracking-tight">$0</span>
-                <span className="text-slate-500 font-medium text-sm">/month</span>
+            <div className="flex items-baseline justify-between mb-4">
+              <div>
+                <h3 className="font-display text-sm font-bold">Free Plan</h3>
+                <p className="text-xs text-muted-foreground/60 mt-0.5">Free forever for growing communities.</p>
               </div>
+              <span className="font-display text-2xl font-bold tracking-tight">$0</span>
             </div>
-            <div className="flex-grow space-y-4">
-              {freePlanFeatures.map((feature, index) => (
-                <motion.div
-                  key={index}
-                  className="flex items-start gap-3 text-sm text-slate-300"
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: 0.1 + (index * 0.05) }}
-                >
-                  <Check className="text-emerald-400 w-5 h-5 shrink-0 mt-0.5" />
-                  <span dangerouslySetInnerHTML={{ __html: feature.text }} />
-                </motion.div>
+            <div className="space-y-2.5 mb-5">
+              {freePlanFeatures.map((f, i) => (
+                <FeatureItem key={i} checkColor="text-emerald-400">{f}</FeatureItem>
               ))}
             </div>
+            <button
+              onClick={() => navigate("/register")}
+              className="mt-auto block w-full text-center py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-xs font-bold transition-colors"
+            >
+              Register Free
+            </button>
           </motion.div>
 
-          {/* Premium Plan */}
+          {/* Premium */}
           <motion.div
-            className="glass rounded-[2rem] p-8 flex flex-col border-primary/40 shadow-[0_0_30px_rgba(14,165,233,0.05)]"
+            className="card-surface border-primary/30 p-5 flex flex-col"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: 0.08 }}
           >
-            <div className="mb-8">
-              <h3 className="text-xl font-bold mb-2">Premium Plan</h3>
-              <p className="text-slate-400 text-sm">For large communities turning a profit.</p>
-              <div className="mt-6 flex items-baseline gap-1">
-                <span className="text-5xl font-bold tracking-tight">$9.99</span>
-                <span className="text-slate-500 font-medium text-sm">/month</span>
+            <div className="flex items-baseline justify-between mb-4">
+              <div>
+                <h3 className="font-display text-sm font-bold">Premium Plan</h3>
+                <p className="text-xs text-muted-foreground/60 mt-0.5">For large communities turning a profit.</p>
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="font-display text-2xl font-bold tracking-tight text-primary">$9.99</span>
+                <span className="text-xs text-muted-foreground">/mo</span>
               </div>
             </div>
-            <div className="flex-grow space-y-4">
-              {premiumPlanFeatures.map((feature, index) => (
-                <motion.div
-                  key={index}
-                  className="flex items-start gap-3 text-sm text-slate-300"
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: 0.2 + (index * 0.05) }}
-                >
-                  <Check className="text-primary w-5 h-5 shrink-0 mt-0.5" />
-                  <span dangerouslySetInnerHTML={{ __html: feature.text }} />
-                </motion.div>
+            <div className="space-y-2.5 mb-5">
+              {premiumPlanFeatures.map((f, i) => (
+                <FeatureItem key={i} checkColor="text-primary">{f}</FeatureItem>
               ))}
             </div>
+            <p className="mt-auto text-center text-[10px] text-muted-foreground/50 py-2.5">
+              Purchase in-panel after registering
+            </p>
           </motion.div>
 
-          {/* Enterprise Plan */}
+          {/* Enterprise */}
           <motion.div
-            className="glass rounded-[2rem] p-8 flex flex-col"
+            className="card-surface p-5 flex flex-col"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: 0.16 }}
           >
-            <div className="mb-8">
-              <h3 className="text-xl font-bold mb-2">Enterprise</h3>
-              <p className="text-slate-400 text-sm">All premium features, tailored to your needs.</p>
+            <div className="flex items-baseline justify-between mb-4">
+              <div>
+                <h3 className="font-display text-sm font-bold">Enterprise</h3>
+                <p className="text-xs text-muted-foreground/60 mt-0.5">All premium features, tailored to your needs.</p>
+              </div>
+              <span className="font-display text-sm font-bold text-foreground/50">Custom</span>
             </div>
-            <div className="flex-grow space-y-4">
-              {enterprisePlanFeatures.map((feature, index) => (
-                <motion.div
-                  key={index}
-                  className="flex items-start gap-3 text-sm text-slate-300"
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: 0.3 + (index * 0.05) }}
-                >
-                  <Check className="text-amber-400 w-5 h-5 shrink-0 mt-0.5" />
-                  <span dangerouslySetInnerHTML={{ __html: feature.text }} />
-                </motion.div>
+            <div className="space-y-2.5 mb-5">
+              {enterprisePlanFeatures.map((f, i) => (
+                <FeatureItem key={i} checkColor="text-sky-400">{f}</FeatureItem>
               ))}
             </div>
             <a
               href="mailto:support@modl.gg"
-              className="mt-8 block w-full text-center py-3 px-6 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-medium text-slate-200 transition-colors"
+              className="mt-auto block w-full text-center py-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-white/20 text-xs font-medium text-foreground/70 transition-colors"
             >
               Contact for Quote
             </a>

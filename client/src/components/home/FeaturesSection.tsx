@@ -1,210 +1,964 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Check, X, Plus } from "lucide-react";
-import { Button } from "@modl-gg/shared-web/components/ui/button";
+import { useRef, useState, useEffect, type ReactNode } from "react";
+import { createPortal } from "react-dom";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
+import {
+  X,
+  ChevronDown,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  ExternalLink,
+} from "lucide-react";
 
-const features = [
+interface Feature {
+  title: string;
+  description: string;
+  expandedDescription: ReactNode;
+  media: string;
+  extraMedia?: string[];
+  hasImage: boolean;
+  gridClass: string;
+}
+
+const B = ({ children }: { children: ReactNode }) => (
+  <span className="text-foreground/90 font-medium">{children}</span>
+);
+const Li = ({ children }: { children: ReactNode }) => (
+  <li className="pl-1">{children}</li>
+);
+
+const features: Feature[] = [
   {
-    icon: "shield-check",
     title: "Smart Punishments",
-    description: "Create customizable punishment systems that scale with player behavior patterns.",
-    expandedContent: "Our dynamic punishment system utilizes a point system to calculate punishment lengths based on severity (discretionary to staff) and points (based on player history). You can also set custom rules, such as automatically unbanning after a player changes his/her skin or username. These are just some of the features of our smart-punishment system.",
-    bgColor: "bg-primary/20",
-    textColor: "text-primary"
+    description:
+      "Dynamically scale punishments based on discretionary leniencies and past offenses.",
+    expandedDescription: (
+      <>
+        <p className="mb-3">
+          Designed to fairly and consistently sanction players whilst
+          maintaining moderator discretion.
+        </p>
+        <ul className="list-disc list-outside ml-4 space-y-1.5">
+          <Li>
+            Fully customizable <B>point system</B> to designate low, medium, and
+            habitual designations for both Gameplay and Social offenses
+          </Li>
+          <Li>
+            Fully customizable punishment durations for each <B>severity</B>{" "}
+            (lenient, normal, severe) and each <B>offender status</B> (low,
+            medium, habitual)
+          </Li>
+          <Li>
+            Issue punishments for bad usernames and skins that{" "}
+            <B>automatically pardon</B> when a player changes their
+            skin/username
+          </Li>
+          <Li>
+            Ability to make a ban "stat-wiping" that issues a command on the
+            server upon expiration to reset stats
+          </Li>
+          <Li>
+            Full modification system for <B>changing durations</B> and{" "}
+            <B>pardoning</B> (remove points)
+          </Li>
+          <Li>
+            Full evidence system for <B>uploading files</B> and linking to other
+            sites (YouTube, Imgur, etc)
+          </Li>
+          <Li>
+            8-char alphanumeric ID system for streamlined appeals - staff see
+            all punishment details and can pardon/change duration without
+            leaving the page
+          </Li>
+          <Li>
+            Bans on offline players wait until a successful login to start the
+            expiration countdown
+          </Li>
+          <Li>
+            Stack multiple bans/mutes that execute <B>consecutively</B> (one
+            after the other becomes inactive)
+          </Li>
+          <Li>
+            Traditional, manual punishments also exist (ban, tempban, mute,
+            tempmute, kick, blacklist)
+          </Li>
+          <Li>
+            Import all bans, mutes, and player data (IPs) from <B>LiteBans</B>{" "}
+            seamlessly
+          </Li>
+        </ul>
+      </>
+    ),
+    media: "https://i.imgur.com/jOJAeO2.gif",
+    extraMedia: ["https://cdn.modl.gg/assets/modl-image-8.png"],
+    hasImage: true,
+    gridClass: "lg:col-span-2",
   },
   {
-    icon: "link",
     title: "Account Linking",
-    description: "Never issue a ban evasion punishment ever again or mangle with ip-bans.",
-    expandedContent: "Automatically link accounts and issue alt-blocking punishments. Handle each linked ban independently, allowing for effortless appeals of siblings and other exceptions.",
-    bgColor: "bg-accent/20",
-    textColor: "text-accent"
+    description:
+      "Auto-detect alts via IP tracking. Handle each linked ban independently.",
+    expandedDescription: (
+      <ul className="list-disc list-outside ml-4 space-y-1.5">
+        <Li>
+          See player info (playtime, session details, country), notes, history,
+          alts, reports in sleek in-game and web UIs
+        </Li>
+        <Li>
+          <B>Link accounts</B> that have the same non-proxy IP logins OR shared
+          proxy logins within 2 hours of each other
+        </Li>
+        <Li>
+          Tracks logins even if denied by a banned screen - link accounts
+          whenever a <B>bad actor</B> attempts to login on a banned account
+          before logging into their evading account
+        </Li>
+        <Li>
+          Handle each linked ban <B>independently</B> - mistake? Public internet
+          or sibling? Easily manage without changing the initial ban
+        </Li>
+        <Li>Linked bans expire when the original ban expires automatically</Li>
+      </ul>
+    ),
+    media: "https://i.imgur.com/4Qmt2wt.gif",
+    extraMedia: ["https://cdn.modl.gg/assets/modl-image-9.png"],
+    hasImage: true,
+    gridClass: "",
   },
   {
-    icon: "headphones",
+    title: "Player Reporting",
+    description:
+      "Auto-snapshot chat, upload evidence, punish from the ticket page.",
+    expandedDescription: (
+      <ul className="list-disc list-outside ml-4 space-y-1.5">
+        <Li>
+          Automatically <B>snapshot</B> full context chat-logs when someone is
+          chat-reported
+        </Li>
+        <Li>
+          Allow players to <B>upload files</B> or link external evidence to all
+          reports
+        </Li>
+        <Li>Issue punishments from reports without leaving the ticket page</Li>
+        <Li>
+          Link tickets to punishments that will auto-close the ticket and notify
+          the reporter that the offender was punished
+        </Li>
+        <Li>
+          Integrates with <B>modl-anticheat-bridge</B> - anti-cheat
+          automatically creates reports based on flags
+        </Li>
+        <Li>
+          Sort online players by number of reports to identify potential rule
+          breakers across your network
+        </Li>
+      </ul>
+    ),
+    media: "https://i.imgur.com/ODXHpjC.gif",
+    extraMedia: ["https://cdn.modl.gg/assets/modl-image-10.png"],
+    hasImage: true,
+    gridClass: "",
+  },
+  {
+    title: "AI Moderation",
+    description:
+      "Context-aware AI on reported messages. Auto-punish or staff-approve.",
+    expandedDescription: (
+      <ul className="list-disc list-outside ml-4 space-y-1.5">
+        <Li>
+          AI chat moderation <B>only scans messages that are chat-reported</B> -
+          no mass-scanning, no annoying false auto-mutes, no excessive token
+          usage
+        </Li>
+        <Li>
+          Constantly evolving system prompts to improve <B>accuracy</B> -
+          context-aware of Minecraft (e.g. "i'm going to kill you with a
+          fireball" is a game term, not an IRL death threat)
+        </Li>
+        <Li>
+          Configure AI to look for specific things and execute punishments{" "}
+          <B>automatically</B> or make suggestions for staff approval
+        </Li>
+      </ul>
+    ),
+    media: "https://cdn.modl.gg/assets/modl-image-11.png",
+    hasImage: true,
+    gridClass: "",
+  },
+  {
+    title: "In-Game Control Menu",
+    description: "Full moderation GUI accessible without leaving the game.",
+    expandedDescription: (
+      <ul className="list-disc list-outside ml-4 space-y-1.5">
+        <Li>
+          Access the full moderation suite directly in-game through intuitive{" "}
+          <B>GUI menus</B>
+        </Li>
+        <Li>
+          View player profiles, issue punishments, manage tickets, and review
+          reports
+        </Li>
+        <Li>
+          Designed for staff actively moderating who need <B>quick access</B>{" "}
+          while playing
+        </Li>
+        <Li>All actions sync instantly with the web panel</Li>
+      </ul>
+    ),
+    media: "https://i.imgur.com/gj49NbH.gif",
+    hasImage: true,
+    gridClass: "lg:col-span-2",
+  },
+  {
     title: "Support Tickets",
-    description: "Integrated ticketing system for reports, appeals, bugs, applications, and support",
-    expandedContent: "Customize forms, quick-responses, notify players in-game and via email of ticket updates, and monitor how response times. For example, appeals automatically gather punishment information and you can pardon/reduce bans with 1 click.",
-    bgColor: "bg-emerald-500/20",
-    textColor: "text-emerald-400"
+    description:
+      "Custom forms, quick-responses, in-game and email notifications.",
+    expandedDescription: (
+      <>
+        <p className="mb-3">
+          Use <B>your own domain</B> (recommended: support.yourserver.com)
+        </p>
+        <ul className="list-disc list-outside ml-4 space-y-1.5">
+          <Li>
+            <B>Fully customizable</B> knowledgebase homepage with logo, external
+            link, and sections
+          </Li>
+          <Li>
+            Searchable markdown article support - write <B>your</B> rules,
+            guidelines, and support articles with ease
+          </Li>
+          <Li>
+            Create fully <B>custom forms</B> for bug reports, support tickets,
+            and staff applications: reveal hidden sections based on answer to
+            multiple-choice questions
+          </Li>
+          <Li>
+            Customizable <B>quick-response buttons</B> to significantly
+            streamline efficiency and keep responses consistent
+          </Li>
+          <Li>
+            Send in-game and email <B>notifications</B> for when staff respond
+            to a player's ticket
+          </Li>
+          <Li>
+            Browser cookies verify that responses in tickets are from the same
+            initial responder
+          </Li>
+          <Li>
+            Staff members are automatically <B>subscribed</B> to tickets they
+            respond in and can easily track updates in their home feed
+          </Li>
+        </ul>
+      </>
+    ),
+    media: "https://cdn.modl.gg/assets/modl-image-7.png",
+    hasImage: true,
+    gridClass: "",
   },
   {
-    icon: "bot",
-    title: "AI Auto-Moderation",
-    description: "AI systems that detect and respond to chat reports in real-time.",
-    expandedContent: "Our highly customizable AI helper is able to analyze chat responses against a custom set of rules and issue real-time or manually-verified punishments with ease. It integrates directly into the tickets feature and requires no additional setup (besides purchasing Premium).",
-    bgColor: "bg-primary/20",
-    textColor: "text-primary"
+    title: "Web Dashboard",
+    description:
+      "Manage your server from anywhere with a powerful web interface.",
+    expandedDescription: (
+      <ul className="list-disc list-outside ml-4 space-y-1.5">
+        <Li>
+          Invite your staff team and fully customize their <B>roles</B> and
+          permissions (permission nodes for each punishment type)
+        </Li>
+        <Li>
+          Set each staff member's Minecraft account so that permissions and
+          punishments are <B>synced</B> between panel and in-game
+        </Li>
+        <Li>
+          Make modl yours: upload a custom logo, favicon, homepage image, and
+          set your custom domain
+        </Li>
+        <Li>
+          Everything is fully <B>customizable</B>, from Minecraft plugin locale
+          to ticket forms and punishment types
+        </Li>
+      </ul>
+    ),
+    media: "https://cdn.modl.gg/assets/modl-image-3.png",
+    extraMedia: ["https://cdn.modl.gg/assets/modl-image-2.png"],
+    hasImage: true,
+    gridClass: "",
   },
   {
-    icon: "globe",
-    title: "Web Integration",
-    description: "Stay in control of your server anywhere you go with the web.",
-    expandedContent: "A web interface that allows you to manage your server more efficiently than ever before alongside comprehensive in-game tools.",
-    bgColor: "bg-accent/20",
-    textColor: "text-accent"
+    title: "Player Profiles",
+    description:
+      "Full player info, session history, notes, and alt accounts at a glance.",
+    expandedDescription: (
+      <ul className="list-disc list-outside ml-4 space-y-1.5">
+        <Li>
+          See player info (playtime, session details, country), notes, history,
+          alts, reports in sleek in-game and web UIs
+        </Li>
+        <Li>
+          Open <B>multiple player windows</B> simultaneously on the web panel
+        </Li>
+        <Li>
+          Full evidence system for <B>uploading files</B> and linking to other
+          sites (YouTube, Imgur, etc)
+        </Li>
+        <Li>
+          8-char alphanumeric ID system for streamlined appeals - staff see all
+          punishment details and can <B>pardon/change duration</B> without
+          leaving the page
+        </Li>
+        <Li>
+          <B>Customize</B> the appeal page for each different punishment type
+        </Li>
+      </ul>
+    ),
+    media: "https://cdn.modl.gg/assets/modl-image-9.png",
+    hasImage: true,
+    gridClass: "",
   },
   {
-    icon: "layout-dashboard",
-    title: "Analytics Dashboard",
-    description: "Comprehensive reports and insights on trends and moderator activity.",
-    expandedContent: "Our analytics dashboard gives you deep insights into moderation trends, support trends, and staff activity. Take actions such as rolling back staff punishments, adjusting punishment lengths, and more to combat bad actors.",
-    bgColor: "bg-emerald-500/20",
-    textColor: "text-emerald-400"
-  }
+    title: "Fully Open-Source",
+    description:
+      "Transparent codebase under AGPL-3.0. Inspect, contribute, and trust the code.",
+    expandedDescription: (
+      <ul className="list-disc list-outside ml-4 space-y-1.5">
+        <Li>
+          Minecraft plugin is fully open-source under the <B>AGPL-3.0</B>{" "}
+          license
+        </Li>
+        <Li>Inspect every line of code that runs on your server</Li>
+        <Li>Contribute improvements and verify security yourself</Li>
+        <Li>
+          Community contributions welcome via <B>GitHub</B>
+        </Li>
+      </ul>
+    ),
+    media: "https://cdn.modl.gg/assets/modl-image-16.png",
+    hasImage: true,
+    gridClass: "",
+  },
+  {
+    title: "Fully Configurable",
+    description:
+      "Every message, rule, and behavior is customizable to your needs.",
+    expandedDescription: (
+      <ul className="list-disc list-outside ml-4 space-y-1.5">
+        <Li>
+          Everything is fully customizable - from Minecraft plugin <B>locale</B>{" "}
+          to ticket forms and punishment types
+        </Li>
+        <Li>
+          Smart, thought-out <B>defaults</B> mean you can get started instantly
+        </Li>
+        <Li>Customize punishment types and point values</Li>
+        <Li>
+          Ticket form fields with <B>conditional logic</B>
+        </Li>
+        <Li>Quick-response templates and notification preferences</Li>
+        <Li>
+          Role permissions with <B>granular permission nodes</B>
+        </Li>
+        <Li>Customize the look and feel of your public-facing pages</Li>
+      </ul>
+    ),
+    media: "https://cdn.modl.gg/assets/modl-image-12.png",
+    extraMedia: ["https://cdn.modl.gg/assets/modl-image-17.png"],
+    hasImage: true,
+    gridClass: "",
+  },
+  {
+    title: "Audit & Analytics",
+    description:
+      "Rollback actions, track trends, manage evidence from one dashboard.",
+    expandedDescription: (
+      <ul className="list-disc list-outside ml-4 space-y-1.5">
+        <Li>
+          Audit and <B>rollback</B> any staff punishment actions
+        </Li>
+        <Li>
+          See statistics on average ticket response times and{" "}
+          <B>staff activity</B> (ticket responses, punishments issued, etc)
+        </Li>
+        <Li>
+          See <B>trends</B> for different types of punishments and ticket data
+        </Li>
+        <Li>
+          Manage all files uploaded (evidence, ticket attachments): easily view,
+          search, filter, delete, and download all files
+        </Li>
+      </ul>
+    ),
+    media: "https://cdn.modl.gg/assets/modl-image-6.png",
+    hasImage: true,
+    gridClass: "",
+  },
+  {
+    title: "Network-Wide Staff Suite",
+    description: "Unified moderation across your entire server network.",
+    expandedDescription: (
+      <ul className="list-disc list-outside ml-4 space-y-1.5">
+        <Li>
+          Works across your entire network - <B>BungeeCord, Velocity</B>, or
+          standalone servers
+        </Li>
+        <Li>
+          Punishments, tickets, reports, and staff permissions are all{" "}
+          <B>synchronized</B>
+        </Li>
+        <Li>
+          Staff can moderate from any server - players can't escape punishments
+          by switching servers
+        </Li>
+        <Li>
+          Supports Spigot, Paper, Folia, Velocity, and BungeeCord (including
+          forks)
+        </Li>
+      </ul>
+    ),
+    media: "https://cdn.modl.gg/assets/modl-image-13.png",
+    extraMedia: ["https://cdn.modl.gg/assets/modl-image-14.png"],
+    hasImage: true,
+    gridClass: "",
+  },
+  {
+    title: "Web-Viewable Replays",
+    description:
+      "Review reported incidents with browser-based replay playback.",
+    expandedDescription: (
+      <ul className="list-disc list-outside ml-4 space-y-1.5">
+        <Li>
+          Review reported incidents through <B>web-viewable replays</B> directly
+          in the browser
+        </Li>
+        <Li>No need to download replay files or open Minecraft</Li>
+        <Li>
+          Perfect for reviewing combat reports, griefing incidents, and disputes
+          that require visual context
+        </Li>
+        <Li>Integrates with compatible recording plugins</Li>
+      </ul>
+    ),
+    media: "https://i.imgur.com/sUPB6Vd.gif",
+    hasImage: true,
+    gridClass: "lg:col-span-2",
+  },
 ];
 
-const getIcon = (iconName: string) => {
-  switch (iconName) {
-    case "shield-check":
-      return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-        </svg>
-      );
-    case "link":
-      return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-        </svg>
-      );
-    case "headphones":
-      return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-        </svg>
-      );
-    case "bot":
-      return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      );
-    case "globe":
-      return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      );
-    case "layout-dashboard":
-      return (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-        </svg>
-      );
-    default:
-      return null;
+const entrances = [
+  { x: -30, y: 25 },
+  { x: 0, y: -25 },
+  { x: 30, y: 20 },
+  { x: -25, y: 30 },
+  { x: 0, y: 30 },
+  { x: 25, y: -20 },
+  { x: -30, y: 20 },
+  { x: 30, y: 25 },
+  { x: -20, y: 30 },
+  { x: 20, y: -25 },
+  { x: -25, y: 25 },
+  { x: 30, y: 30 },
+  { x: 0, y: 35 },
+];
+
+const ease = [0.22, 1, 0.36, 1];
+
+function getColCount(): number {
+  if (typeof window === "undefined") return 4;
+  if (window.innerWidth >= 1024) return 4; // lg
+  if (window.innerWidth >= 640) return 2; // sm
+  return 1;
+}
+
+function getCardSpan(gridClass: string, colCount: number): number {
+  // lg:col-span-2 only applies at lg (4 cols), sm:col-span-2 at sm+ (2+ cols)
+  if (colCount >= 4 && gridClass.includes("col-span-2")) return 2;
+  if (colCount >= 2 && gridClass.includes("sm:col-span-2")) return 2;
+  return 1;
+}
+
+function computeRows(colCount: number): number[][] {
+  const rows: number[][] = [];
+  let currentRow: number[] = [];
+  let currentSpan = 0;
+
+  for (let i = 0; i < features.length; i++) {
+    const span = getCardSpan(features[i].gridClass, colCount);
+
+    if (currentSpan + span > colCount && currentRow.length > 0) {
+      rows.push(currentRow);
+      currentRow = [];
+      currentSpan = 0;
+    }
+
+    currentRow.push(i);
+    currentSpan += span;
+
+    if (currentSpan >= colCount) {
+      rows.push(currentRow);
+      currentRow = [];
+      currentSpan = 0;
+    }
   }
+
+  if (currentRow.length > 0) rows.push(currentRow);
+
+  return rows;
+}
+
+function useFeatureRows() {
+  const [rows, setRows] = useState(() => computeRows(getColCount()));
+
+  useEffect(() => {
+    const update = () => setRows(computeRows(getColCount()));
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return rows;
+}
+
+function CollapsedCard({
+  feature,
+  index,
+  isSelected,
+  onClick,
+}: {
+  feature: Feature;
+  index: number;
+  isSelected: boolean;
+  onClick: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const imgY = useTransform(scrollYProgress, [0, 1], [10, -10]);
+  const entrance = entrances[index];
+
+  return (
+    <motion.div
+      ref={ref}
+      className={`group relative overflow-hidden rounded-2xl border bg-card cursor-pointer min-h-[220px] transition-colors duration-300 hover:border-primary/25 ${
+        isSelected
+          ? "border-primary/40 ring-1 ring-primary/20"
+          : "border-white/[0.06]"
+      } ${feature.gridClass}`}
+      initial={{ opacity: 0, ...entrance, scale: 0.92 }}
+      whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+      viewport={{ once: true, amount: 0.08, margin: "0px 0px -24px 0px" }}
+      transition={{ duration: 0.7, delay: index * 0.06, ease }}
+      onClick={onClick}
+    >
+      {feature.hasImage ? (
+        <motion.div className="absolute inset-0" style={{ y: imgY }}>
+          <img
+            src={feature.media}
+            alt={feature.title}
+            className="w-full h-[110%] object-cover object-top screenshot-sharp"
+            loading="lazy"
+          />
+        </motion.div>
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.08] to-transparent" />
+      )}
+      <div className="absolute inset-0 bg-[#07090d]/[0.08] backdrop-blur-[1.5px] transition-colors duration-300 group-hover:bg-[#07090d]/[0.1]" />
+      <div
+        className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-95"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(7,9,13,0.88) 0%, rgba(7,9,13,0.68) 24%, rgba(7,9,13,0.34) 48%, rgba(7,9,13,0.1) 66%, transparent 86%)",
+        }}
+      />
+      <div className="relative h-full flex flex-col justify-end p-5">
+        <div className="flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="font-display text-base font-bold mb-1 tracking-tight text-white/80 drop-shadow-[0_1px_10px_rgba(0,0,0,0.8)]">
+              {feature.title}
+            </h3>
+            <p className="text-xs text-white/[0.72] leading-relaxed line-clamp-2 drop-shadow-[0_1px_8px_rgba(0,0,0,0.85)]">
+              {feature.description}
+            </p>
+          </div>
+          <ChevronDown
+            className={`w-4 h-4 shrink-0 text-white/[0.45] group-hover:text-white/75 transition-all duration-300 ${isSelected ? "rotate-180 text-primary/70" : ""}`}
+          />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+type PreviewImage = {
+  src: string;
+  alt: string;
 };
 
-export default function FeaturesSection() {
-  const [expandedFeature, setExpandedFeature] = useState<number | null>(null);
+function ImagePreviewModal({
+  image,
+  onClose,
+}: {
+  image: PreviewImage;
+  onClose: () => void;
+}) {
+  const [zoom, setZoom] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const dragStart = useRef<{
+    pointerId: number;
+    x: number;
+    y: number;
+    startX: number;
+    startY: number;
+  } | null>(null);
 
-  const toggleFeature = (index: number) => {
-    if (expandedFeature === index) {
-      setExpandedFeature(null);
-    } else {
-      setExpandedFeature(index);
+  useEffect(() => {
+    setZoom(1);
+    setPosition({ x: 0, y: 0 });
+  }, [image.src]);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+      if (event.key === "+" || event.key === "=")
+        setZoom((value) => Math.min(4, value + 0.25));
+      if (event.key === "-") setZoom((value) => Math.max(1, value - 0.25));
+      if (event.key === "0") {
+        setZoom(1);
+        setPosition({ x: 0, y: 0 });
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onClose]);
+
+  const setConstrainedZoom = (nextZoom: number) => {
+    const constrained = Math.min(4, Math.max(1, nextZoom));
+    setZoom(constrained);
+    if (constrained === 1) setPosition({ x: 0, y: 0 });
+  };
+
+  const resetView = () => {
+    setZoom(1);
+    setPosition({ x: 0, y: 0 });
+  };
+
+  return createPortal(
+    <motion.div
+      className="fixed inset-0 z-50 bg-[#07090d]/[0.86] backdrop-blur-xl"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onWheel={(event) => {
+        event.preventDefault();
+        setConstrainedZoom(zoom + (event.deltaY < 0 ? 0.2 : -0.2));
+      }}
+    >
+      <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between gap-3 px-4 py-4 sm:px-6">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-medium text-white/90">
+            {image.alt}
+          </p>
+          <p className="text-xs text-white/[0.46]">
+            Scroll or use controls to zoom. Drag while zoomed.
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] p-1 backdrop-blur-md">
+          <button
+            type="button"
+            onClick={() => setConstrainedZoom(zoom - 0.25)}
+            className="rounded-lg p-2 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+            aria-label="Zoom out"
+          >
+            <ZoomOut className="h-4 w-4" />
+          </button>
+          <span className="w-12 text-center text-xs font-medium text-white/60">
+            {Math.round(zoom * 100)}%
+          </span>
+          <button
+            type="button"
+            onClick={() => setConstrainedZoom(zoom + 0.25)}
+            className="rounded-lg p-2 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+            aria-label="Zoom in"
+          >
+            <ZoomIn className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            onClick={resetView}
+            className="rounded-lg p-2 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+            aria-label="Reset zoom"
+          >
+            <RotateCcw className="h-4 w-4" />
+          </button>
+          <a
+            href={image.src}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-lg p-2 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+            aria-label="Open original image"
+          >
+            <ExternalLink className="h-4 w-4" />
+          </a>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg bg-white/10 p-2 text-white/80 transition-colors hover:bg-white/[0.18] hover:text-white"
+            aria-label="Close image preview"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+
+      <div
+        className="relative z-10 flex h-full cursor-zoom-out items-center justify-center px-4 pb-8 pt-24 sm:px-8"
+        onClick={onClose}
+      >
+        <motion.img
+          src={image.src}
+          alt={image.alt}
+          className={`max-h-full max-w-full select-none rounded-lg border border-white/10 bg-[#101219] object-contain shadow-2xl ${zoom > 1 ? "cursor-grab active:cursor-grabbing" : "cursor-zoom-in"}`}
+          draggable={false}
+          style={{
+            x: position.x,
+            y: position.y,
+            scale: zoom,
+            transformOrigin: "center",
+          }}
+          onClick={(event) => {
+            event.stopPropagation();
+            if (zoom === 1) setConstrainedZoom(1.75);
+          }}
+          onPointerDown={(event) => {
+            event.stopPropagation();
+            if (zoom <= 1) return;
+            event.currentTarget.setPointerCapture(event.pointerId);
+            dragStart.current = {
+              pointerId: event.pointerId,
+              x: event.clientX,
+              y: event.clientY,
+              startX: position.x,
+              startY: position.y,
+            };
+          }}
+          onPointerMove={(event) => {
+            if (
+              !dragStart.current ||
+              dragStart.current.pointerId !== event.pointerId
+            )
+              return;
+            setPosition({
+              x: dragStart.current.startX + event.clientX - dragStart.current.x,
+              y: dragStart.current.startY + event.clientY - dragStart.current.y,
+            });
+          }}
+          onPointerUp={(event) => {
+            if (dragStart.current?.pointerId === event.pointerId)
+              dragStart.current = null;
+          }}
+          onPointerCancel={() => {
+            dragStart.current = null;
+          }}
+        />
+      </div>
+    </motion.div>,
+    document.body,
+  );
+}
+
+function ExpandedPanel({
+  feature,
+  onClose,
+  onPreviewImage,
+}: {
+  feature: Feature;
+  onClose: () => void;
+  onPreviewImage: (image: PreviewImage) => void;
+}) {
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    panelRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, []);
+
+  const allMedia = [
+    ...(feature.hasImage ? [feature.media] : []),
+    ...(feature.extraMedia ?? []),
+  ];
+
+  return (
+    <motion.div
+      ref={panelRef}
+      className="rounded-2xl border border-primary/20 bg-card overflow-hidden"
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: "auto" }}
+      exit={{ opacity: 0, height: 0 }}
+      transition={{ duration: 0.35, ease }}
+    >
+      <div className="relative p-5 lg:p-6">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-20 p-1.5 rounded-lg bg-white/[0.08] hover:bg-white/[0.15] transition-colors"
+        >
+          <X className="w-4 h-4 text-white/70" />
+        </button>
+
+        {/* Content fades in separately for smooth switching */}
+        <motion.div
+          key={feature.title}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
+          {!feature.hasImage && (
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] to-transparent pointer-events-none rounded-2xl" />
+          )}
+
+          <div className="relative">
+            <h2 className="font-display text-xl font-bold tracking-tight mb-2">
+              {feature.title}
+            </h2>
+            <div className="text-sm text-muted-foreground leading-relaxed mb-5 max-w-3xl">
+              {feature.expandedDescription}
+            </div>
+          </div>
+
+          {allMedia.length > 0 && (
+            <div
+              className={`grid items-start gap-3 ${allMedia.length === 1 ? "grid-cols-1 max-w-3xl" : "grid-cols-1 sm:grid-cols-2"}`}
+            >
+              {allMedia.map((src, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() =>
+                    onPreviewImage({
+                      src,
+                      alt: `${feature.title} preview ${i + 1}`,
+                    })
+                  }
+                  className="group/media relative overflow-hidden rounded-xl border border-white/[0.11] bg-transparent transition-colors hover:border-primary/[0.35] focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/60"
+                >
+                  <img
+                    src={src}
+                    alt=""
+                    className="block h-auto w-full max-h-[460px] object-contain screenshot-sharp transition-transform duration-300 group-hover/media:scale-[1.01]"
+                  />
+                  <span className="pointer-events-none absolute bottom-3 right-3 rounded-lg border border-white/10 bg-[#07090d]/70 px-2 py-1 text-[11px] font-medium text-white/[0.62] opacity-0 backdrop-blur-sm transition-opacity group-hover/media:opacity-100">
+                    Preview
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
+
+// Preload all expanded-view images so they appear instantly on click
+function usePreloadImages() {
+  useEffect(() => {
+    for (const f of features) {
+      if (f.media) {
+        const img = new Image();
+        img.src = f.media;
+      }
+      for (const src of f.extraMedia ?? []) {
+        const img = new Image();
+        img.src = src;
+      }
     }
+  }, []);
+}
+
+export default function FeaturesSection() {
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [previewImage, setPreviewImage] = useState<PreviewImage | null>(null);
+  const rows = useFeatureRows();
+  usePreloadImages();
+
+  const handleClick = (i: number) => {
+    setExpandedIndex(expandedIndex === i ? null : i);
   };
 
   return (
-    <section id="features" className="py-20 px-6">
-      <div className="max-w-7xl mx-auto">
+    <section id="features" className="pt-6 sm:pt-8 pb-12 px-4 sm:px-6 md:px-10">
+      <div className="max-w-5xl mx-auto flex flex-col gap-3">
+        {/* Hero glass bar */}
         <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5 }}
+          className="glass-bar rounded-2xl px-6 py-4 sm:px-8 sm:py-5 flex items-center gap-6"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease }}
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Powerful Moderation Tools</h2>
-          <p className="text-xl text-slate-400 max-w-2xl mx-auto">
-            Everything you need to keep your Minecraft community safe, engaged, and supported
+          <h1 className="font-brand text-2xl sm:text-3xl tracking-tight shrink-0">
+            <span className="text-primary">modl</span>
+            <span className="text-foreground/70">.gg</span>
+          </h1>
+          <span className="w-px h-6 bg-white/10 shrink-0 hidden sm:block" />
+          <p className="text-sm text-muted-foreground/70 leading-relaxed">
+            The comprehensive moderation and support suite for Minecraft
+            servers: smart punishments, web replays, efficient ticketing, robust
+            analytics, and a full web dashboard.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              className={`glass rounded-3xl p-8 transition-all duration-300 ${expandedFeature === index ? 'border-primary/40' : ''}`}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.5, delay: index * 0.05 }}
-            >
-              <div className="flex justify-between items-start">
-                <div className={`w-12 h-12 ${feature.bgColor} rounded-2xl flex items-center justify-center mb-6`}>
-                  <span className={feature.textColor}>
-                    {getIcon(feature.icon)}
-                  </span>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-slate-400 hover:text-white"
-                  onClick={() => toggleFeature(index)}
-                >
-                  {expandedFeature === index ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-                </Button>
-              </div>
-              <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-              <p className="text-slate-400">{feature.description}</p>
+        {/* Feature cards grid */}
+        <div className="flex flex-col gap-3">
+          {rows.map((row, rowIndex) => {
+            const isExpandedRow =
+              expandedIndex !== null && row.includes(expandedIndex);
 
-              <AnimatePresence>
-                {expandedFeature === index && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="pt-4 mt-4 border-t border-slate-700">
-                      <p className="text-slate-300">
-                        {feature.expandedContent}
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
+            return (
+              <div key={`feature-row-${rowIndex}`} className="flex flex-col gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-auto gap-3">
+                  {row.map((featureIndex) => (
+                    <CollapsedCard
+                      key={features[featureIndex].title}
+                      feature={features[featureIndex]}
+                      index={featureIndex}
+                      isSelected={expandedIndex === featureIndex}
+                      onClick={() => handleClick(featureIndex)}
+                    />
+                  ))}
+                </div>
+
+                <AnimatePresence mode="wait">
+                  {isExpandedRow && expandedIndex !== null && (
+                    <ExpandedPanel
+                      key={`panel-${expandedIndex}`}
+                      feature={features[expandedIndex]}
+                      onClose={() => setExpandedIndex(null)}
+                      onPreviewImage={setPreviewImage}
+                    />
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
         </div>
 
-        <motion.div
-          className="mt-12 max-w-4xl mx-auto"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          <div className="glass rounded-3xl p-8 text-center">
-            <h3 className="text-2xl font-bold mb-6">Easy Integration with Your Server</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                { text: "Drag & drop plugin for any platform", delay: 0.1 },
-                { text: "Import from LiteBans and other plugins*", delay: 0.2 },
-                { text: "Fully configurable messages and settings", delay: 0.3 },
-                { text: "Low latency web-to-game sync", delay: 0.4 }
-              ].map((item, index) => (
-                <motion.div
-                  key={index}
-                  className="flex items-center"
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: item.delay }}
-                >
-                  <Check className="text-emerald-400 mt-0.5 mr-2 shrink-0" />
-                  <span className="text-left text-slate-300">{item.text}</span>
-                </motion.div>
-              ))}
-            </div>
-            <p className="text-xs text-slate-500 mt-4">* Importing from other moderation plugins is available upon request</p>
-          </div>
-        </motion.div>
+        <AnimatePresence>
+          {previewImage && (
+            <ImagePreviewModal
+              image={previewImage}
+              onClose={() => setPreviewImage(null)}
+            />
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );
