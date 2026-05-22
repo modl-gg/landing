@@ -10,6 +10,7 @@ import Home from "@/pages/Home";
 import Registration from "@/pages/Registration";
 import TermsOfService from "@/pages/TermsOfService";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import DataProcessingAddendum from "@/pages/DataProcessingAddendum";
 import { ThemeProvider } from "next-themes";
 import { seoRoutes } from "@/lib/seo";
 
@@ -49,6 +50,11 @@ function Router() {
       <Route path="/privacy">
         <WithSeo route={seoRoutes.privacy}>
           <PrivacyPolicy />
+        </WithSeo>
+      </Route>
+      <Route path="/dpa">
+        <WithSeo route={seoRoutes.dpa}>
+          <DataProcessingAddendum />
         </WithSeo>
       </Route>
       <Route component={NotFound} />

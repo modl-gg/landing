@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useLocation } from "wouter";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@modl-gg/shared-web/components/ui/button";
@@ -6,64 +6,15 @@ import Logo from "./ui/Logo";
 import { ArrowLeft } from "lucide-react";
 
 interface MarkdownPageProps {
-  filePath: string;
-  title: string;
+  content: string;
 }
 
-export default function MarkdownPage({ filePath, title }: MarkdownPageProps) {
+export default function MarkdownPage({ content }: MarkdownPageProps) {
   const [, navigate] = useLocation();
-  const [content, setContent] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     window.scrollTo(0, 0);
-
-    const fetchMarkdown = async () => {
-      try {
-        const response = await fetch(filePath);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch ${title}`);
-        }
-        const text = await response.text();
-        setContent(text);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load content");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMarkdown();
-  }, [filePath, title]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background text-foreground font-sans">
-        <Logo clickCallback={() => navigate("/")} />
-        <div className="pt-20 flex items-center justify-center min-h-[50vh]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading {title}...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-background text-foreground font-sans">
-        <Logo clickCallback={() => navigate("/")} />
-        <div className="pt-20 flex items-center justify-center min-h-[50vh]">
-          <div className="text-center">
-            <p className="text-red-500 mb-4">Error: {error}</p>
-            <Button onClick={() => navigate("/")}>Go Back Home</Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">

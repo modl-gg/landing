@@ -78,8 +78,8 @@ const registrationSchema = z.object({
       message: "This subdomain is reserved and cannot be used. Please choose a different one.",
     }),
   
-  agreeTerms: z.literal(true, {
-    errorMap: () => ({ message: "You must agree to the terms to continue" }),
+  agreeTerms: z.boolean().refine((value) => value === true, {
+    message: "You must agree to the terms to continue",
   }),
   turnstileToken: z.string().min(1, { message: "Security verification is required" }),
 });
@@ -100,7 +100,7 @@ export default function RegistrationForm() {
       email: "",
       serverName: "",
       customDomain: "",
-      agreeTerms: false as any,
+      agreeTerms: false,
       turnstileToken: "",
     },
   });
@@ -320,7 +320,7 @@ export default function RegistrationForm() {
                           htmlFor="agree-terms"
                           className="text-sm text-foreground cursor-pointer"
                         >
-                          I agree to the <a href="/terms" className="text-primary hover:text-primary/80" target="_blank" rel="noopener noreferrer">Terms of Service</a> and <a href="/privacy" className="text-primary hover:text-primary/80" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+                          I agree to the <a href="/terms" className="text-primary hover:text-primary/80" target="_blank" rel="noopener noreferrer">Terms of Service</a>, <a href="/privacy" className="text-primary hover:text-primary/80" target="_blank" rel="noopener noreferrer">Privacy Policy</a>, and <a href="/dpa" className="text-primary hover:text-primary/80" target="_blank" rel="noopener noreferrer">Data Processing Addendum</a>
                         </Label>
                         <FormMessage />
                       </div>

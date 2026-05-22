@@ -38,6 +38,13 @@ export const seoRoutes = {
     description:
       "Read the modl.gg terms of service for the Minecraft moderation and support platform.",
   },
+  dpa: {
+    path: "/dpa",
+    url: `${siteUrl}/dpa`,
+    title: "modl.gg - Data Processing Addendum",
+    description:
+      "Read the modl.gg data processing addendum covering how player data is processed on behalf of Minecraft server owners.",
+  },
 } as const satisfies Record<string, SeoRoute>;
 
 export const sameAsLinks = [

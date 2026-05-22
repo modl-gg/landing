@@ -21,6 +21,7 @@ export default function Footer() {
               <a href={import.meta.env.VITE_DOCS_URL} target="_blank" rel="noopener noreferrer" className={linkClasses}>Documentation</a>
               <a href="/privacy" className={linkClasses}>Privacy</a>
               <a href="/terms" className={linkClasses}>Terms</a>
+              <a href="/dpa" className={linkClasses}>DPA</a>
             </div>
           </div>
 
