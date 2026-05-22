@@ -191,29 +191,26 @@ const features: Feature[] = [
     gridClass: "",
   },
   {
-    title: "Audit & Analytics",
-    description:
-      "Rollback actions, track trends, manage evidence from one dashboard.",
+    title: "In-Game Control Menu",
+    description: "Full moderation GUI accessible without leaving the game.",
     expandedDescription: (
       <ul className="list-disc list-outside ml-4 space-y-1.5">
         <Li>
-          Audit and <B>rollback</B> any staff punishment actions
+          Access the full moderation suite directly in-game through intuitive{" "}
+          <B>GUI menus</B>
         </Li>
         <Li>
-          See statistics on average ticket response times and{" "}
-          <B>staff activity</B> (ticket responses, punishments issued, etc)
+          View player profiles, issue punishments, manage tickets, and review
+          reports
         </Li>
         <Li>
-          See <B>trends</B> for different types of punishments and ticket data
+          Designed for staff actively moderating who need <B>quick access</B>{" "}
+          while playing
         </Li>
-        <Li>
-          Manage all files uploaded (evidence, ticket attachments): easily view,
-          search, filter, delete, and download all files
-        </Li>
+        <Li>All actions sync instantly with the web panel</Li>
       </ul>
     ),
     media: "https://i.imgur.com/gj49NbH.gif",
-    extraMedia: ["https://cdn.modl.gg/assets/modl-image-6.png"],
     hasImage: true,
     gridClass: "lg:col-span-2",
   },
@@ -340,81 +337,8 @@ const features: Feature[] = [
         </Li>
       </ul>
     ),
-    media: "",
-    hasImage: false,
-    gridClass: "",
-  },
-  {
-    title: "Web-Viewable Replays",
-    description:
-      "Review reported incidents with browser-based replay playback.",
-    expandedDescription: (
-      <ul className="list-disc list-outside ml-4 space-y-1.5">
-        <Li>
-          Review reported incidents through <B>web-viewable replays</B> directly
-          in the browser
-        </Li>
-        <Li>No need to download replay files or open Minecraft</Li>
-        <Li>
-          Perfect for reviewing combat reports, griefing incidents, and disputes
-          that require visual context
-        </Li>
-        <Li>Integrates with compatible recording plugins</Li>
-      </ul>
-    ),
-    media: "",
-    hasImage: false,
-    gridClass: "",
-  },
-  {
-    title: "In-Game Control Menu",
-    description: "Full moderation GUI accessible without leaving the game.",
-    expandedDescription: (
-      <ul className="list-disc list-outside ml-4 space-y-1.5">
-        <Li>
-          Access the full moderation suite directly in-game through intuitive{" "}
-          <B>GUI menus</B>
-        </Li>
-        <Li>
-          View player profiles, issue punishments, manage tickets, and review
-          reports
-        </Li>
-        <Li>
-          Designed for staff actively moderating who need <B>quick access</B>{" "}
-          while playing
-        </Li>
-        <Li>All actions sync instantly with the web panel</Li>
-      </ul>
-    ),
-    media: "",
-    hasImage: false,
-    gridClass: "",
-  },
-  {
-    title: "Network-Wide Staff Suite",
-    description: "Unified moderation across your entire server network.",
-    expandedDescription: (
-      <ul className="list-disc list-outside ml-4 space-y-1.5">
-        <Li>
-          Works across your entire network - <B>BungeeCord, Velocity</B>, or
-          standalone servers
-        </Li>
-        <Li>
-          Punishments, tickets, reports, and staff permissions are all{" "}
-          <B>synchronized</B>
-        </Li>
-        <Li>
-          Staff can moderate from any server - players can't escape punishments
-          by switching servers
-        </Li>
-        <Li>
-          Supports Spigot, Paper, Folia, Velocity, and BungeeCord (including
-          forks)
-        </Li>
-      </ul>
-    ),
-    media: "",
-    hasImage: false,
+    media: "https://cdn.modl.gg/assets/modl-image-16.png",
+    hasImage: true,
     gridClass: "",
   },
   {
@@ -441,8 +365,85 @@ const features: Feature[] = [
         <Li>Customize the look and feel of your public-facing pages</Li>
       </ul>
     ),
-    media: "",
-    hasImage: false,
+    media: "https://cdn.modl.gg/assets/modl-image-12.png",
+    extraMedia: ["https://cdn.modl.gg/assets/modl-image-17.png"],
+    hasImage: true,
+    gridClass: "",
+  },
+  {
+    title: "Audit & Analytics",
+    description:
+      "Rollback actions, track trends, manage evidence from one dashboard.",
+    expandedDescription: (
+      <ul className="list-disc list-outside ml-4 space-y-1.5">
+        <Li>
+          Audit and <B>rollback</B> any staff punishment actions
+        </Li>
+        <Li>
+          See statistics on average ticket response times and{" "}
+          <B>staff activity</B> (ticket responses, punishments issued, etc)
+        </Li>
+        <Li>
+          See <B>trends</B> for different types of punishments and ticket data
+        </Li>
+        <Li>
+          Manage all files uploaded (evidence, ticket attachments): easily view,
+          search, filter, delete, and download all files
+        </Li>
+      </ul>
+    ),
+    media: "https://cdn.modl.gg/assets/modl-image-6.png",
+    hasImage: true,
+    gridClass: "",
+  },
+  {
+    title: "Network-Wide Staff Suite",
+    description: "Unified moderation across your entire server network.",
+    expandedDescription: (
+      <ul className="list-disc list-outside ml-4 space-y-1.5">
+        <Li>
+          Works across your entire network - <B>BungeeCord, Velocity</B>, or
+          standalone servers
+        </Li>
+        <Li>
+          Punishments, tickets, reports, and staff permissions are all{" "}
+          <B>synchronized</B>
+        </Li>
+        <Li>
+          Staff can moderate from any server - players can't escape punishments
+          by switching servers
+        </Li>
+        <Li>
+          Supports Spigot, Paper, Folia, Velocity, and BungeeCord (including
+          forks)
+        </Li>
+      </ul>
+    ),
+    media: "https://cdn.modl.gg/assets/modl-image-13.png",
+    extraMedia: ["https://cdn.modl.gg/assets/modl-image-14.png"],
+    hasImage: true,
+    gridClass: "",
+  },
+  {
+    title: "Web-Viewable Replays",
+    description:
+      "Review reported incidents with browser-based replay playback.",
+    expandedDescription: (
+      <ul className="list-disc list-outside ml-4 space-y-1.5">
+        <Li>
+          Review reported incidents through <B>web-viewable replays</B> directly
+          in the browser
+        </Li>
+        <Li>No need to download replay files or open Minecraft</Li>
+        <Li>
+          Perfect for reviewing combat reports, griefing incidents, and disputes
+          that require visual context
+        </Li>
+        <Li>Integrates with compatible recording plugins</Li>
+      </ul>
+    ),
+    media: "https://i.imgur.com/sUPB6Vd.gif",
+    hasImage: true,
     gridClass: "lg:col-span-2",
   },
 ];
@@ -479,53 +480,45 @@ function getCardSpan(gridClass: string, colCount: number): number {
   return 1;
 }
 
-function computeRowEnds(colCount: number): number[] {
-  const lastInRow: number[] = [];
-  let c = 0;
+function computeRows(colCount: number): number[][] {
+  const rows: number[][] = [];
+  let currentRow: number[] = [];
+  let currentSpan = 0;
+
   for (let i = 0; i < features.length; i++) {
     const span = getCardSpan(features[i].gridClass, colCount);
-    if (c + span > colCount) {
-      // card doesn't fit, previous card was end of row
-      if (
-        i > 0 &&
-        (lastInRow.length === 0 || lastInRow[lastInRow.length - 1] !== i - 1)
-      ) {
-        lastInRow.push(i - 1);
-      }
-      c = 0;
+
+    if (currentSpan + span > colCount && currentRow.length > 0) {
+      rows.push(currentRow);
+      currentRow = [];
+      currentSpan = 0;
     }
-    c += span;
-    if (c >= colCount) {
-      lastInRow.push(i);
-      c = 0;
+
+    currentRow.push(i);
+    currentSpan += span;
+
+    if (currentSpan >= colCount) {
+      rows.push(currentRow);
+      currentRow = [];
+      currentSpan = 0;
     }
   }
-  if (
-    lastInRow.length === 0 ||
-    lastInRow[lastInRow.length - 1] !== features.length - 1
-  ) {
-    lastInRow.push(features.length - 1);
-  }
-  return lastInRow;
+
+  if (currentRow.length > 0) rows.push(currentRow);
+
+  return rows;
 }
 
-function useRowEnds() {
-  const [rowEnds, setRowEnds] = useState(() => computeRowEnds(getColCount()));
+function useFeatureRows() {
+  const [rows, setRows] = useState(() => computeRows(getColCount()));
 
   useEffect(() => {
-    const update = () => setRowEnds(computeRowEnds(getColCount()));
+    const update = () => setRows(computeRows(getColCount()));
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  return rowEnds;
-}
-
-function getRowEndForCard(rowEnds: number[], cardIndex: number): number {
-  for (const end of rowEnds) {
-    if (cardIndex <= end) return end;
-  }
-  return features.length - 1;
+  return rows;
 }
 
 function CollapsedCard({
@@ -557,7 +550,7 @@ function CollapsedCard({
       } ${feature.gridClass}`}
       initial={{ opacity: 0, ...entrance, scale: 0.92 }}
       whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-60px" }}
+      viewport={{ once: true, amount: 0.08, margin: "0px 0px -24px 0px" }}
       transition={{ duration: 0.7, delay: index * 0.06, ease }}
       onClick={onClick}
     >
@@ -807,7 +800,7 @@ function ExpandedPanel({
   return (
     <motion.div
       ref={panelRef}
-      className="col-span-full rounded-2xl border border-primary/20 bg-card overflow-hidden"
+      className="rounded-2xl border border-primary/20 bg-card overflow-hidden"
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: "auto" }}
       exit={{ opacity: 0, height: 0 }}
@@ -894,48 +887,12 @@ function usePreloadImages() {
 export default function FeaturesSection() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [previewImage, setPreviewImage] = useState<PreviewImage | null>(null);
-  const rowEnds = useRowEnds();
+  const rows = useFeatureRows();
   usePreloadImages();
 
   const handleClick = (i: number) => {
     setExpandedIndex(expandedIndex === i ? null : i);
   };
-
-  const expandedRowEnd =
-    expandedIndex !== null ? getRowEndForCard(rowEnds, expandedIndex) : -1;
-
-  // Build grid items: cards + expanded panel slot after each row
-  const gridItems: React.ReactNode[] = [];
-  const allRowEnds = new Set(rowEnds);
-
-  for (let i = 0; i < features.length; i++) {
-    gridItems.push(
-      <CollapsedCard
-        key={features[i].title}
-        feature={features[i]}
-        index={i}
-        isSelected={expandedIndex === i}
-        onClick={() => handleClick(i)}
-      />,
-    );
-
-    // After each row end, place an AnimatePresence slot for the panel
-    if (allRowEnds.has(i)) {
-      const isThisRow = i === expandedRowEnd && expandedIndex !== null;
-      gridItems.push(
-        <AnimatePresence key={`panel-slot-${i}`} mode="wait">
-          {isThisRow && (
-            <ExpandedPanel
-              key={`panel-${expandedIndex}`}
-              feature={features[expandedIndex]}
-              onClose={() => setExpandedIndex(null)}
-              onPreviewImage={setPreviewImage}
-            />
-          )}
-        </AnimatePresence>,
-      );
-    }
-  }
 
   return (
     <section id="features" className="pt-6 sm:pt-8 pb-12 px-4 sm:px-6 md:px-10">
@@ -960,8 +917,38 @@ export default function FeaturesSection() {
         </motion.div>
 
         {/* Feature cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-auto gap-3">
-          {gridItems}
+        <div className="flex flex-col gap-3">
+          {rows.map((row, rowIndex) => {
+            const isExpandedRow =
+              expandedIndex !== null && row.includes(expandedIndex);
+
+            return (
+              <div key={`feature-row-${rowIndex}`} className="flex flex-col gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-auto gap-3">
+                  {row.map((featureIndex) => (
+                    <CollapsedCard
+                      key={features[featureIndex].title}
+                      feature={features[featureIndex]}
+                      index={featureIndex}
+                      isSelected={expandedIndex === featureIndex}
+                      onClick={() => handleClick(featureIndex)}
+                    />
+                  ))}
+                </div>
+
+                <AnimatePresence mode="wait">
+                  {isExpandedRow && expandedIndex !== null && (
+                    <ExpandedPanel
+                      key={`panel-${expandedIndex}`}
+                      feature={features[expandedIndex]}
+                      onClose={() => setExpandedIndex(null)}
+                      onPreviewImage={setPreviewImage}
+                    />
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
         </div>
 
         <AnimatePresence>
