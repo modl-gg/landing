@@ -1,5 +1,6 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import { MODL } from "@modl-gg/shared-web";
+
+const DEFAULT_HTTPS_API = "https://api.modl.gg";
 
 function resolveApiBaseUrl(): string {
   if (import.meta.env.DEV) {
@@ -21,7 +22,7 @@ function resolveApiBaseUrl(): string {
     }
   }
 
-  return MODL.Domain.HTTPS_API;
+  return DEFAULT_HTTPS_API;
 }
 
 const API_BASE_URL = resolveApiBaseUrl();

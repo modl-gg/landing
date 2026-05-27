@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check } from "lucide-react";
+import Check from "lucide-react/dist/esm/icons/check.js";
 import { Button } from "@modl-gg/shared-web/components/ui/button";
 
 interface SuccessModalProps {

@@ -1,19 +1,12 @@
 import { useRef, useState, useEffect, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-} from "framer-motion";
-import {
-  X,
-  ChevronDown,
-  ZoomIn,
-  ZoomOut,
-  RotateCcw,
-  ExternalLink,
-} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import X from "lucide-react/dist/esm/icons/x.js";
+import ChevronDown from "lucide-react/dist/esm/icons/chevron-down.js";
+import ZoomIn from "lucide-react/dist/esm/icons/zoom-in.js";
+import ZoomOut from "lucide-react/dist/esm/icons/zoom-out.js";
+import RotateCcw from "lucide-react/dist/esm/icons/rotate-ccw.js";
+import ExternalLink from "lucide-react/dist/esm/icons/external-link.js";
 
 interface Feature {
   title: string;
@@ -513,79 +506,106 @@ function useFeatureRows() {
   const [rows, setRows] = useState(() => computeRows(getColCount()));
 
   useEffect(() => {
-    const update = () => setRows(computeRows(getColCount()));
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
+    let lastCols = getColCount();
+    let timer: number | undefined;
+    const update = () => {
+      const cols = getColCount();
+      if (cols === lastCols) return;
+      lastCols = cols;
+      setRows(computeRows(cols));
+    };
+    const onResize = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(update, 120);
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.clearTimeout(timer);
+    };
   }, []);
 
   return rows;
+}
+
+function isAnimatedMedia(src: string): boolean {
+  return /\.gif(\?|$)/i.test(src);
+}
+
+function toVideoSrc(src: string): string {
+  return src.replace(/\.gif(\?|$)/i, ".mp4$1");
 }
 
 function CollapsedCard({
   feature,
   index,
   isSelected,
+  isAboveFold,
   onClick,
 }: {
   feature: Feature;
   index: number;
   isSelected: boolean;
+  isAboveFold: boolean;
   onClick: () => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-  const imgY = useTransform(scrollYProgress, [0, 1], [10, -10]);
   const entrance = entrances[index];
+  const animated = feature.hasImage && isAnimatedMedia(feature.media);
 
   return (
     <motion.div
-      ref={ref}
-      className={`group relative overflow-hidden rounded-2xl border bg-card cursor-pointer min-h-[220px] transition-colors duration-300 hover:border-primary/25 ${
+      className={`feature-card group relative overflow-hidden rounded-2xl border bg-card cursor-pointer min-h-[220px] transition-colors duration-300 hover:border-primary/25 ${
         isSelected
           ? "border-primary/40 ring-1 ring-primary/20"
           : "border-white/[0.06]"
       } ${feature.gridClass}`}
-      initial={{ opacity: 0, ...entrance, scale: 0.92 }}
-      whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+      initial={{ opacity: 0, ...entrance }}
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once: true, amount: 0.08, margin: "0px 0px -24px 0px" }}
-      transition={{ duration: 0.7, delay: index * 0.06, ease }}
+      transition={{ duration: 0.55, delay: index * 0.025, ease }}
       onClick={onClick}
     >
       {feature.hasImage ? (
-        <motion.div className="absolute inset-0" style={{ y: imgY }}>
-          <img
-            src={feature.media}
-            alt={feature.title}
-            className="w-full h-[110%] object-cover object-top screenshot-sharp"
-            loading="lazy"
-          />
-        </motion.div>
+        <div className="absolute inset-0">
+          {animated ? (
+            <video
+              src={toVideoSrc(feature.media)}
+              className="w-full h-full object-cover object-top screenshot-sharp"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload={isAboveFold ? "auto" : "metadata"}
+              disableRemotePlayback
+              aria-label={feature.title}
+            />
+          ) : (
+            <img
+              src={feature.media}
+              alt={feature.title}
+              className="w-full h-full object-cover object-top screenshot-sharp"
+              loading={isAboveFold ? "eager" : "lazy"}
+              decoding="async"
+              {...(isAboveFold ? { fetchPriority: "high" as const } : {})}
+            />
+          )}
+        </div>
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.08] to-transparent" />
       )}
-      <div className="absolute inset-0 bg-[#07090d]/[0.08] backdrop-blur-[1.5px] transition-colors duration-300 group-hover:bg-[#07090d]/[0.1]" />
-      <div
-        className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-95"
-        style={{
-          background:
-            "linear-gradient(to top, rgba(7,9,13,0.88) 0%, rgba(7,9,13,0.68) 24%, rgba(7,9,13,0.34) 48%, rgba(7,9,13,0.1) 66%, transparent 86%)",
-        }}
-      />
-      <div className="relative h-full flex flex-col justify-end p-5">
+
+      <div className="feature-card-frost absolute inset-0 flex flex-col justify-end px-5 pt-4 pb-5">
         <div className="flex items-end justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="font-display text-base font-bold mb-1 tracking-tight text-white/80 drop-shadow-[0_1px_10px_rgba(0,0,0,0.8)]">
+            <h3 className="feature-card-title font-display text-base font-bold mb-1 tracking-tight text-white">
               {feature.title}
             </h3>
-            <p className="text-xs text-white/[0.72] leading-relaxed line-clamp-2 drop-shadow-[0_1px_8px_rgba(0,0,0,0.85)]">
+            <p className="feature-card-desc text-xs text-white/95 leading-relaxed line-clamp-2">
               {feature.description}
             </p>
           </div>
           <ChevronDown
-            className={`w-4 h-4 shrink-0 text-white/[0.45] group-hover:text-white/75 transition-all duration-300 ${isSelected ? "rotate-180 text-primary/70" : ""}`}
+            className={`w-4 h-4 shrink-0 text-white/70 group-hover:text-white/95 transition-transform duration-300 ${isSelected ? "rotate-180 text-primary" : ""}`}
           />
         </div>
       </div>
@@ -593,16 +613,17 @@ function CollapsedCard({
   );
 }
 
-type PreviewImage = {
+type PreviewMedia = {
   src: string;
   alt: string;
+  kind: "image" | "video";
 };
 
-function ImagePreviewModal({
-  image,
+function MediaPreviewModal({
+  media,
   onClose,
 }: {
-  image: PreviewImage;
+  media: PreviewMedia;
   onClose: () => void;
 }) {
   const [zoom, setZoom] = useState(1);
@@ -618,7 +639,7 @@ function ImagePreviewModal({
   useEffect(() => {
     setZoom(1);
     setPosition({ x: 0, y: 0 });
-  }, [image.src]);
+  }, [media.src]);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -655,7 +676,7 @@ function ImagePreviewModal({
 
   return createPortal(
     <motion.div
-      className="fixed inset-0 z-50 bg-[#07090d]/[0.86] backdrop-blur-xl"
+      className="fixed inset-0 z-50 bg-[#07090d]/95 backdrop-blur-md"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -667,7 +688,7 @@ function ImagePreviewModal({
       <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between gap-3 px-4 py-4 sm:px-6">
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-white/90">
-            {image.alt}
+            {media.alt}
           </p>
           <p className="text-xs text-white/[0.46]">
             Scroll or use controls to zoom. Drag while zoomed.
@@ -702,11 +723,11 @@ function ImagePreviewModal({
             <RotateCcw className="h-4 w-4" />
           </button>
           <a
-            href={image.src}
+            href={media.src}
             target="_blank"
             rel="noreferrer"
             className="rounded-lg p-2 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
-            aria-label="Open original image"
+            aria-label={media.kind === "video" ? "Open original video" : "Open original image"}
           >
             <ExternalLink className="h-4 w-4" />
           </a>
@@ -714,7 +735,7 @@ function ImagePreviewModal({
             type="button"
             onClick={onClose}
             className="rounded-lg bg-white/10 p-2 text-white/80 transition-colors hover:bg-white/[0.18] hover:text-white"
-            aria-label="Close image preview"
+            aria-label={media.kind === "video" ? "Close video preview" : "Close image preview"}
           >
             <X className="h-4 w-4" />
           </button>
@@ -725,52 +746,103 @@ function ImagePreviewModal({
         className="relative z-10 flex h-full cursor-zoom-out items-center justify-center px-4 pb-8 pt-24 sm:px-8"
         onClick={onClose}
       >
-        <motion.img
-          src={image.src}
-          alt={image.alt}
-          className={`max-h-full max-w-full select-none rounded-lg border border-white/10 bg-[#101219] object-contain shadow-2xl ${zoom > 1 ? "cursor-grab active:cursor-grabbing" : "cursor-zoom-in"}`}
-          draggable={false}
-          style={{
-            x: position.x,
-            y: position.y,
-            scale: zoom,
-            transformOrigin: "center",
-          }}
-          onClick={(event) => {
-            event.stopPropagation();
-            if (zoom === 1) setConstrainedZoom(1.75);
-          }}
-          onPointerDown={(event) => {
-            event.stopPropagation();
-            if (zoom <= 1) return;
-            event.currentTarget.setPointerCapture(event.pointerId);
-            dragStart.current = {
-              pointerId: event.pointerId,
-              x: event.clientX,
-              y: event.clientY,
-              startX: position.x,
-              startY: position.y,
-            };
-          }}
-          onPointerMove={(event) => {
-            if (
-              !dragStart.current ||
-              dragStart.current.pointerId !== event.pointerId
-            )
-              return;
-            setPosition({
-              x: dragStart.current.startX + event.clientX - dragStart.current.x,
-              y: dragStart.current.startY + event.clientY - dragStart.current.y,
-            });
-          }}
-          onPointerUp={(event) => {
-            if (dragStart.current?.pointerId === event.pointerId)
+        {media.kind === "video" ? (
+          <motion.video
+            src={media.src}
+            aria-label={media.alt}
+            className={`max-h-full max-w-full select-none rounded-lg border border-white/10 bg-[#101219] object-contain shadow-2xl ${zoom > 1 ? "cursor-grab active:cursor-grabbing" : "cursor-default"}`}
+            autoPlay
+            loop
+            muted
+            playsInline
+            controls
+            disableRemotePlayback
+            style={{
+              x: position.x,
+              y: position.y,
+              scale: zoom,
+              transformOrigin: "center",
+            }}
+            onClick={(event) => event.stopPropagation()}
+            onPointerDown={(event) => {
+              event.stopPropagation();
+              if (zoom <= 1) return;
+              event.currentTarget.setPointerCapture(event.pointerId);
+              dragStart.current = {
+                pointerId: event.pointerId,
+                x: event.clientX,
+                y: event.clientY,
+                startX: position.x,
+                startY: position.y,
+              };
+            }}
+            onPointerMove={(event) => {
+              if (
+                !dragStart.current ||
+                dragStart.current.pointerId !== event.pointerId
+              )
+                return;
+              setPosition({
+                x: dragStart.current.startX + event.clientX - dragStart.current.x,
+                y: dragStart.current.startY + event.clientY - dragStart.current.y,
+              });
+            }}
+            onPointerUp={(event) => {
+              if (dragStart.current?.pointerId === event.pointerId)
+                dragStart.current = null;
+            }}
+            onPointerCancel={() => {
               dragStart.current = null;
-          }}
-          onPointerCancel={() => {
-            dragStart.current = null;
-          }}
-        />
+            }}
+          />
+        ) : (
+          <motion.img
+            src={media.src}
+            alt={media.alt}
+            className={`max-h-full max-w-full select-none rounded-lg border border-white/10 bg-[#101219] object-contain shadow-2xl ${zoom > 1 ? "cursor-grab active:cursor-grabbing" : "cursor-zoom-in"}`}
+            draggable={false}
+            style={{
+              x: position.x,
+              y: position.y,
+              scale: zoom,
+              transformOrigin: "center",
+            }}
+            onClick={(event) => {
+              event.stopPropagation();
+              if (zoom === 1) setConstrainedZoom(1.75);
+            }}
+            onPointerDown={(event) => {
+              event.stopPropagation();
+              if (zoom <= 1) return;
+              event.currentTarget.setPointerCapture(event.pointerId);
+              dragStart.current = {
+                pointerId: event.pointerId,
+                x: event.clientX,
+                y: event.clientY,
+                startX: position.x,
+                startY: position.y,
+              };
+            }}
+            onPointerMove={(event) => {
+              if (
+                !dragStart.current ||
+                dragStart.current.pointerId !== event.pointerId
+              )
+                return;
+              setPosition({
+                x: dragStart.current.startX + event.clientX - dragStart.current.x,
+                y: dragStart.current.startY + event.clientY - dragStart.current.y,
+              });
+            }}
+            onPointerUp={(event) => {
+              if (dragStart.current?.pointerId === event.pointerId)
+                dragStart.current = null;
+            }}
+            onPointerCancel={() => {
+              dragStart.current = null;
+            }}
+          />
+        )}
       </div>
     </motion.div>,
     document.body,
@@ -780,11 +852,11 @@ function ImagePreviewModal({
 function ExpandedPanel({
   feature,
   onClose,
-  onPreviewImage,
+  onPreviewMedia,
 }: {
   feature: Feature;
   onClose: () => void;
-  onPreviewImage: (image: PreviewImage) => void;
+  onPreviewMedia: (media: PreviewMedia) => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -804,7 +876,7 @@ function ExpandedPanel({
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: "auto" }}
       exit={{ opacity: 0, height: 0 }}
-      transition={{ duration: 0.35, ease }}
+      transition={{ duration: 0.28, ease }}
     >
       <div className="relative p-5 lg:p-6">
         <button
@@ -838,28 +910,66 @@ function ExpandedPanel({
             <div
               className={`grid items-start gap-3 ${allMedia.length === 1 ? "grid-cols-1 max-w-3xl" : "grid-cols-1 sm:grid-cols-2"}`}
             >
-              {allMedia.map((src, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() =>
-                    onPreviewImage({
-                      src,
-                      alt: `${feature.title} preview ${i + 1}`,
-                    })
-                  }
-                  className="group/media relative overflow-hidden rounded-xl border border-white/[0.11] bg-transparent transition-colors hover:border-primary/[0.35] focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/60"
-                >
-                  <img
-                    src={src}
-                    alt=""
-                    className="block h-auto w-full max-h-[460px] object-contain screenshot-sharp transition-transform duration-300 group-hover/media:scale-[1.01]"
-                  />
-                  <span className="pointer-events-none absolute bottom-3 right-3 rounded-lg border border-white/10 bg-[#07090d]/70 px-2 py-1 text-[11px] font-medium text-white/[0.62] opacity-0 backdrop-blur-sm transition-opacity group-hover/media:opacity-100">
-                    Preview
-                  </span>
-                </button>
-              ))}
+              {allMedia.map((src, i) => {
+                const alt = `${feature.title} preview ${i + 1}`;
+                if (isAnimatedMedia(src)) {
+                  const videoSrc = toVideoSrc(src);
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() =>
+                        onPreviewMedia({
+                          src: videoSrc,
+                          alt,
+                          kind: "video",
+                        })
+                      }
+                      className="group/media relative overflow-hidden rounded-xl border border-white/[0.11] bg-transparent transition-colors hover:border-primary/[0.35] focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/60"
+                    >
+                      <video
+                        src={videoSrc}
+                        className="block h-auto w-full max-h-[460px] object-contain screenshot-sharp transition-[filter] duration-300 group-hover/media:brightness-110 pointer-events-none"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        disableRemotePlayback
+                        aria-label={alt}
+                      />
+                      <span className="pointer-events-none absolute bottom-3 right-3 rounded-lg border border-white/10 bg-[#07090d]/70 px-2 py-1 text-[11px] font-medium text-white/[0.62] opacity-0 backdrop-blur-sm transition-opacity group-hover/media:opacity-100">
+                        Preview
+                      </span>
+                    </button>
+                  );
+                }
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() =>
+                      onPreviewMedia({
+                        src,
+                        alt,
+                        kind: "image",
+                      })
+                    }
+                    className="group/media relative overflow-hidden rounded-xl border border-white/[0.11] bg-transparent transition-colors hover:border-primary/[0.35] focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/60"
+                  >
+                    <img
+                      src={src}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      className="block h-auto w-full max-h-[460px] object-contain screenshot-sharp transition-[filter] duration-300 group-hover/media:brightness-110"
+                    />
+                    <span className="pointer-events-none absolute bottom-3 right-3 rounded-lg border border-white/10 bg-[#07090d]/70 px-2 py-1 text-[11px] font-medium text-white/[0.62] opacity-0 backdrop-blur-sm transition-opacity group-hover/media:opacity-100">
+                      Preview
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           )}
         </motion.div>
@@ -868,27 +978,30 @@ function ExpandedPanel({
   );
 }
 
-// Preload all expanded-view images so they appear instantly on click
-function usePreloadImages() {
+// Warm just the extra-media images for whichever card is expanded.
+// Collapsed cards already fetch `feature.media` via their own <img> tags.
+function usePrefetchExtraMedia(extraMedia: string[] | undefined) {
   useEffect(() => {
-    for (const f of features) {
-      if (f.media) {
-        const img = new Image();
-        img.src = f.media;
+    if (!extraMedia?.length) return;
+    for (const src of extraMedia) {
+      const img = new Image();
+      if ("fetchPriority" in img) {
+        (img as HTMLImageElement & { fetchPriority: string }).fetchPriority =
+          "low";
       }
-      for (const src of f.extraMedia ?? []) {
-        const img = new Image();
-        img.src = src;
-      }
+      img.decoding = "async";
+      img.src = src;
     }
-  }, []);
+  }, [extraMedia]);
 }
 
 export default function FeaturesSection() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-  const [previewImage, setPreviewImage] = useState<PreviewImage | null>(null);
+  const [previewMedia, setPreviewMedia] = useState<PreviewMedia | null>(null);
   const rows = useFeatureRows();
-  usePreloadImages();
+  usePrefetchExtraMedia(
+    expandedIndex !== null ? features[expandedIndex].extraMedia : undefined,
+  );
 
   const handleClick = (i: number) => {
     setExpandedIndex(expandedIndex === i ? null : i);
@@ -931,6 +1044,7 @@ export default function FeaturesSection() {
                       feature={features[featureIndex]}
                       index={featureIndex}
                       isSelected={expandedIndex === featureIndex}
+                      isAboveFold={rowIndex === 0}
                       onClick={() => handleClick(featureIndex)}
                     />
                   ))}
@@ -942,7 +1056,7 @@ export default function FeaturesSection() {
                       key={`panel-${expandedIndex}`}
                       feature={features[expandedIndex]}
                       onClose={() => setExpandedIndex(null)}
-                      onPreviewImage={setPreviewImage}
+                      onPreviewMedia={setPreviewMedia}
                     />
                   )}
                 </AnimatePresence>
@@ -952,10 +1066,10 @@ export default function FeaturesSection() {
         </div>
 
         <AnimatePresence>
-          {previewImage && (
-            <ImagePreviewModal
-              image={previewImage}
-              onClose={() => setPreviewImage(null)}
+          {previewMedia && (
+            <MediaPreviewModal
+              media={previewMedia}
+              onClose={() => setPreviewMedia(null)}
             />
           )}
         </AnimatePresence>

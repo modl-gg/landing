@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@modl-gg/shared-web/components/ui/button";
 import Logo from "./ui/Logo";
-import { ArrowLeft } from "lucide-react";
+import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left.js";
 
 interface MarkdownPageProps {
   content: string;

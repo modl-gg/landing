@@ -25,7 +25,7 @@ function FAQColumn({ items, offset }: { items: typeof FAQData; offset: number })
         <AccordionItem
           key={offset + index}
           value={`item-${offset + index}`}
-          className="border-b-0 card-surface overflow-hidden data-[state=open]:bg-[hsl(var(--surface-2))] transition-all"
+          className="border-b-0 card-surface overflow-hidden data-[state=open]:bg-[hsl(var(--surface-2))] transition-colors"
         >
           <motion.div
             initial={{ opacity: 0, y: 10 }}

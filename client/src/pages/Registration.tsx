@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import RegistrationForm from "@/components/registration/RegistrationForm";
 import { Particles } from "@modl-gg/shared-web/components/ui/particles";
+import { Toaster } from "@modl-gg/shared-web/components/ui/toaster";
 
 export default function Registration() {
   useEffect(() => {
-    // Scroll to top on mount
     window.scrollTo(0, 0);
   }, []);
 
@@ -14,6 +14,7 @@ export default function Registration() {
         <Particles className="absolute inset-0" quantity={20} />
       </div>
       <RegistrationForm />
+      <Toaster />
     </div>
   );
 }

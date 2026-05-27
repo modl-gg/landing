@@ -23,11 +23,21 @@ export default defineConfig(({ mode }) => {
       'process.env.APP_DOMAIN': JSON.stringify(env.APP_DOMAIN || 'modl.gg')
     },
     resolve: {
-      alias: {
-        "@": path.resolve(import.meta.dirname, "client", "src"),
-        "@shared": path.resolve(import.meta.dirname, "shared"),
-        "@assets": path.resolve(import.meta.dirname, "attached_assets"),
-      },
+      alias: [
+        { find: "@", replacement: path.resolve(import.meta.dirname, "client", "src") },
+        { find: "@shared", replacement: path.resolve(import.meta.dirname, "shared") },
+        { find: "@assets", replacement: path.resolve(import.meta.dirname, "attached_assets") },
+        {
+          find: /^lucide-react$/,
+          replacement: path.resolve(
+            import.meta.dirname,
+            "client",
+            "src",
+            "lib",
+            "lucide-shim.ts",
+          ),
+        },
+      ],
       preserveSymlinks: true,
     },
     envDir: path.resolve(import.meta.dirname),
@@ -35,6 +45,34 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: path.resolve(import.meta.dirname, "dist"),
       emptyOutDir: true,
+      target: "es2020",
+      cssCodeSplit: true,
+      modulePreload: {
+        polyfill: true,
+        resolveDependencies(_filename, deps) {
+          return deps.filter((d) => !/\/(forms|markdown)-[A-Za-z0-9_-]+\.js$/.test(d));
+        },
+      },
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (!id.includes("node_modules")) return;
+            if (id.includes("/framer-motion/")) return "framer-motion";
+            if (id.includes("/react/") || id.includes("/react-dom/") || id.includes("/scheduler/")) {
+              return "react";
+            }
+            if (id.includes("/@radix-ui/")) return "radix";
+            if (id.includes("/react-hook-form/") || id.includes("/@hookform/") || id.includes("/zod/")) {
+              return "forms";
+            }
+            if (id.includes("/lucide-react/") || id.includes("/react-icons/")) return "icons";
+            if (id.includes("/react-markdown/") || id.includes("/remark") || id.includes("/rehype") || id.includes("/micromark") || id.includes("/mdast") || id.includes("/unist")) {
+              return "markdown";
+            }
+            return "vendor";
+          },
+        },
+      },
     },
     server: {
       port: 5174,

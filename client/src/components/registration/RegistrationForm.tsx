@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@modl-gg/shared-web/components/ui/input";
 import { Button } from "@modl-gg/shared-web/components/ui/button";
 import { Checkbox } from "@modl-gg/shared-web/components/ui/checkbox";
-import { ArrowLeft } from "lucide-react";
+import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left.js";
 import { apiRequest } from "@/lib/queryClient";
 import SuccessModal from "./SuccessModal";
 import { Label } from "@modl-gg/shared-web/components/ui/label";
@@ -193,9 +193,9 @@ export default function RegistrationForm() {
       <nav className="bg-background/90 backdrop-blur border-b border-gray-800 p-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-          <Link href="/" className="text-2xl font-extrabold tracking-tight">
-            <span className="text-primary font-brand">modl</span>
-            <span className="text-white font-brand">.gg</span>
+          <Link href="/" className="font-brand text-2xl tracking-tight shrink-0">
+            <span className="text-primary">modl</span>
+            <span className="text-foreground/70">.gg</span>
           </Link>
             <Link href="/">
               <Button variant="ghost" className="text-muted-foreground hover:text-foreground flex items-center">
@@ -276,22 +276,22 @@ export default function RegistrationForm() {
                       <FormLabel>
                         Panel Subdomain <span className="text-red-500">*</span>
                       </FormLabel>
-                      <div className="flex">
+                      <div className={cn(
+                        "flex items-stretch rounded-md border bg-card/50 transition-colors overflow-hidden",
+                        fieldState.error
+                          ? "border-red-500 focus-within:border-red-500"
+                          : "border-gray-700 focus-within:border-primary"
+                      )}>
                         <FormControl>
                           <Input
                             placeholder="yourserver"
                             {...field}
-                            className={cn(
-                              "px-4 py-3 rounded-l-md bg-card/50 border text-foreground focus:outline-none",
-                              fieldState.error
-                                ? "border-red-500 focus:border-red-500"
-                                : "border-gray-700 focus:border-primary"
-                            )}
+                            className="flex-1 px-4 py-3 h-auto bg-transparent border-0 rounded-none text-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
                           />
                         </FormControl>
                         <div className={cn(
-                          "inline-flex items-center px-3 rounded-r-md border border-l-0 bg-card/80 text-muted-foreground",
-                          fieldState.error ? "border-red-500" : "border-gray-700"
+                          "inline-flex items-center px-3 border-l text-muted-foreground bg-white/[0.03]",
+                          fieldState.error ? "border-red-500/60" : "border-gray-700"
                         )}>
                           .{process.env.APP_DOMAIN || 'modl.gg'}
                         </div>
