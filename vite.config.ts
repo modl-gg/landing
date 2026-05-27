@@ -49,26 +49,15 @@ export default defineConfig(({ mode }) => {
       cssCodeSplit: true,
       modulePreload: {
         polyfill: true,
-        resolveDependencies(_filename, deps) {
-          return deps.filter((d) => !/\/(forms|markdown)-[A-Za-z0-9_-]+\.js$/.test(d));
-        },
+      },
+      commonjsOptions: {
+        transformMixedEsModules: true,
       },
       rollupOptions: {
         output: {
           manualChunks(id) {
             if (!id.includes("node_modules")) return;
             if (id.includes("/framer-motion/")) return "framer-motion";
-            if (id.includes("/react/") || id.includes("/react-dom/") || id.includes("/scheduler/")) {
-              return "react";
-            }
-            if (id.includes("/@radix-ui/")) return "radix";
-            if (id.includes("/react-hook-form/") || id.includes("/@hookform/") || id.includes("/zod/")) {
-              return "forms";
-            }
-            if (id.includes("/lucide-react/") || id.includes("/react-icons/")) return "icons";
-            if (id.includes("/react-markdown/") || id.includes("/remark") || id.includes("/rehype") || id.includes("/micromark") || id.includes("/mdast") || id.includes("/unist")) {
-              return "markdown";
-            }
             return "vendor";
           },
         },
